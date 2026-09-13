@@ -484,12 +484,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
   React.useLayoutEffect(() => {
     startAnimation(true);
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (runningRef.current && e.key === 'Escape') finish();
-    };
-    addEventListener('keydown', onKeyDown);
     return () => {
-      removeEventListener('keydown', onKeyDown);
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       if (timerRef.current) clearTimeout(timerRef.current);
       document.documentElement.classList.remove('ascii-startup-active');
@@ -513,9 +508,6 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
     >
       <div className="ascii-startup__top">
         <span>KHA/PORTFOLIO_OS</span>
-        <button className="ascii-startup__skip" type="button" onClick={() => finish()}>
-          SKIP
-        </button>
       </div>
 
       <div className="ascii-startup__core">
@@ -548,7 +540,6 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
 
       <div className="ascii-startup__bottom">
         <span><span className="ascii-startup__signal">●</span> LOCAL SESSION</span>
-        <span>ESC TO SKIP</span>
       </div>
     </section>
   );
