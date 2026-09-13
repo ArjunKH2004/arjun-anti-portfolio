@@ -362,12 +362,12 @@ K  K   H   H    A     A    R  R    J  J    U   U  N  NN
 K   K  H   H   A       A   R   R    JJ      UUU   N   N`;
 
 function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string }) {
-  const [hidden, setHidden] = useState<boolean>(true);
+  const [hidden, setHidden] = useState<boolean>(false);
   const [leaving, setLeaving] = useState<boolean>(false);
   const [artText, setArtText] = useState<string>(FINAL_ASCII_ART);
   const [progress, setProgress] = useState<number>(0);
   const [stepState, setStepState] = useState<Array<'WAIT' | 'READ' | 'OK'>>(['WAIT', 'WAIT', 'WAIT']);
-  const runningRef = React.useRef<boolean>(false);
+  const runningRef = React.useRef<boolean>(true);
   const frameRef = React.useRef<number>(0);
   const timerRef = React.useRef<number>(0);
   const frameNumRef = React.useRef<number>(0);
@@ -398,7 +398,11 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
   const startAnimation = React.useCallback((force = false) => {
     let seen = false;
     try { seen = localStorage.getItem(storageKey) === '1'; } catch {}
-    if (!force && seen) return;
+    if (!force && seen) {
+      setHidden(true);
+      runningRef.current = false;
+      return;
+    }
 
     if (timerRef.current) clearTimeout(timerRef.current);
     setHidden(false);
@@ -450,7 +454,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
     frameRef.current = requestAnimationFrame(tick);
   }, [finish, storageKey]);
 
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     startAnimation(true);
 
     const onKeyDown = (e: KeyboardEvent) => {
