@@ -643,22 +643,22 @@ function BlackHole() {
         const red = Math.round(0 + 91 * intensity);
         const green = Math.round(55 + 118 * intensity);
         const blue = Math.round(92 + 103 * intensity);
-        return `rgb(${red} ${green} ${blue})`;
+        return `rgb(${red}, ${green}, ${blue})`;
       }
       if (region === 'dust') {
         const red = Math.round(0 + 38 * intensity);
         const green = Math.round(30 + 92 * intensity);
         const blue = Math.round(56 + 115 * intensity);
-        return `rgb(${red} ${green} ${blue})`;
+        return `rgb(${red}, ${green}, ${blue})`;
       }
       if (region === 'ring') {
         const red = Math.round(0 + 158 * intensity);
         const green = Math.round(93 + 116 * intensity);
         const blue = Math.round(150 + 91 * intensity);
-        return `rgb(${red} ${green} ${blue})`;
+        return `rgb(${red}, ${green}, ${blue})`;
       }
       const blue = Math.round(72 + 74 * intensity);
-      return `rgb(${Math.round(blue * 0.32)} ${Math.round(blue * 0.67)} ${blue})`;
+      return `rgb(${Math.round(blue * 0.32)}, ${Math.round(blue * 0.67)}, ${blue})`;
     };
 
     const draw = (now: number) => {
