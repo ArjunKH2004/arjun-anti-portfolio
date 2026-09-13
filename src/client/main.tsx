@@ -97,7 +97,7 @@ function ProjectVisual({ slug, compact = false }: { slug: string; compact?: bool
   );
   if (slug === 'tejasvi-26') return (
     <div className={`project-visual image-project-visual tejasvi-project-visual ${compact ? 'compact' : ''}`}>
-      <img src="/projects/tejasvi-cover.webp" alt="Tejasvi 26, The Ritual of Fire brand identity artwork" loading={compact ? 'lazy' : 'eager'}/>
+      <img src="/projects/tejasvi-cover.jpg" alt="Tejasvi 26, The Ritual of Fire brand identity artwork" loading={compact ? 'lazy' : 'eager'}/>
     </div>
   );
   return (
