@@ -421,9 +421,36 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
     }
 
     const startedAt = performance.now();
-    const tick = (now: number) => {
+    let currentP = 0;
+    let isFullyLoaded = document.readyState === 'complete';
+
+    const onWindowLoad = () => { isFullyLoaded = true; };
+    if (!isFullyLoaded) {
+      window.addEventListener('load', onWindowLoad, { once: true });
+    }
+
+    const computeRealProgress = () => {
+      if (isFullyLoaded || document.readyState === 'complete') return 1.0;
+
+      const imgs = Array.from(document.images);
+      const totalImgs = imgs.length || 1;
+      const loadedImgs = imgs.filter(img => img.complete).length;
+      const imgRatio = loadedImgs / totalImgs;
+
+      if (document.readyState === 'interactive') {
+        return 0.5 + 0.45 * imgRatio;
+      }
+      return 0.15 + 0.3 * imgRatio;
+    };
+
+    const tick = () => {
       if (!runningRef.current) return;
-      const p = Math.min(1, (now - startedAt) / 1650);
+
+      const targetP = computeRealProgress();
+      if (currentP < targetP) {
+        currentP = Math.min(targetP, currentP + (targetP - currentP) * 0.08 + 0.005);
+      }
+      const p = Math.min(1, currentP);
       frameNumRef.current += 1;
 
       const revealAt = Math.floor(FINAL_ASCII_ART.length * Math.min(1, p * 1.18));
@@ -447,7 +474,8 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
       if (p < 1) {
         frameRef.current = requestAnimationFrame(tick);
       } else {
-        timerRef.current = window.setTimeout(() => finish(), 160);
+        window.removeEventListener('load', onWindowLoad);
+        timerRef.current = window.setTimeout(() => finish(), 180);
       }
     };
 
