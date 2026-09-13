@@ -475,7 +475,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
         frameRef.current = requestAnimationFrame(tick);
       } else {
         window.removeEventListener('load', onWindowLoad);
-        timerRef.current = window.setTimeout(() => finish(), 180);
+        timerRef.current = window.setTimeout(() => finish(), 1000);
       }
     };
 
