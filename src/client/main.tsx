@@ -553,7 +553,7 @@ function App() {
   const [section, setSection] = useState('boot');
 
   useEffect(() => {
-    const ids = ['boot', 'who_am_i', 'projects', 'archive', 'about', 'next', 'contact'];
+    const ids = ['boot', 'who-am-i', 'projects', 'archive', 'about', 'next', 'contact'];
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => entry.isIntersecting && setSection(entry.target.id));
     }, { rootMargin: '-30% 0px -60% 0px' });
@@ -593,12 +593,12 @@ function App() {
           <h1>I'VE BEEN<br/>MAKING THINGS<br/><em>FOR A WHILE.</em></h1>
           <p>Some became projects. Some became experience. Some became lessons.</p>
         </div>
-        <button className="continue" onClick={() => go('who_am_i')}><ArrowDown size={15}/> continue</button>
+        <button className="continue" onClick={() => go('who-am-i')}><ArrowDown size={15}/> continue</button>
         <div className="boot-index">PERSONAL ENVIRONMENT<br/>REV. 26.09 / ONLINE</div>
       </section>
 
-      <section id="who_am_i" className="who-section section-pad">
-        <Command>who_am_i</Command>
+      <section id="who-am-i" className="who-section section-pad">
+        <Command>who-am-i</Command>
         <div className="section-heading who-heading"><ScrollLetterReveal text="HERE'S WHAT I ACTUALLY WANT YOU TO KNOW." breaks={[23]}/><span>03 STATEMENTS<br/>NO BIOGRAPHY</span></div>
         <div className="statements">
           {systemStatements.map(s => <article key={s.n} className="statement"><span>{s.n}</span><h2>{s.title}</h2><p>{s.copy}</p></article>)}
