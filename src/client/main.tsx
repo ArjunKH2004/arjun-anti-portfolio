@@ -632,6 +632,7 @@ function BlackHole() {
     };
 
     const draw = (now: number) => {
+      if (width <= 0 || height <= 0) return;
       const elapsed = reducedMotion.matches ? 3.4 : (now - started) / 1000;
       context.clearRect(0, 0, width, height);
 
