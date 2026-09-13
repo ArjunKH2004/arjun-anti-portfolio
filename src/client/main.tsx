@@ -322,30 +322,47 @@ function LiveClock() {
 
   useEffect(() => {
     let bmRef: any = null;
-    let handleLevel: any = null;
-    let handleCharging: any = null;
+    let pollTimer: any = null;
+
+    const syncBattery = () => {
+      if (bmRef) {
+        setBattery({
+          level: Math.round(bmRef.level * 100),
+          charging: bmRef.charging,
+        });
+      }
+    };
 
     if ('getBattery' in navigator && typeof (navigator as any).getBattery === 'function') {
       (navigator as any).getBattery().then((bm: any) => {
         bmRef = bm;
-        const update = () => {
-          setBattery({
-            level: Math.round(bm.level * 100),
-            charging: bm.charging,
-          });
-        };
-        update();
-        handleLevel = () => update();
-        handleCharging = () => update();
-        bm.addEventListener('levelchange', handleLevel);
-        bm.addEventListener('chargingchange', handleCharging);
+        syncBattery();
+
+        bm.onlevelchange = syncBattery;
+        bm.onchargingchange = syncBattery;
+        bm.onchargingtimechange = syncBattery;
+        bm.ondischargingtimechange = syncBattery;
+
+        bm.addEventListener?.('levelchange', syncBattery);
+        bm.addEventListener?.('chargingchange', syncBattery);
+        bm.addEventListener?.('chargingtimechange', syncBattery);
+        bm.addEventListener?.('dischargingtimechange', syncBattery);
+
+        pollTimer = setInterval(syncBattery, 3000);
       }).catch(() => {});
     }
 
     return () => {
+      if (pollTimer) clearInterval(pollTimer);
       if (bmRef) {
-        if (handleLevel) bmRef.removeEventListener('levelchange', handleLevel);
-        if (handleCharging) bmRef.removeEventListener('chargingchange', handleCharging);
+        bmRef.onlevelchange = null;
+        bmRef.onchargingchange = null;
+        bmRef.onchargingtimechange = null;
+        bmRef.ondischargingtimechange = null;
+        bmRef.removeEventListener?.('levelchange', syncBattery);
+        bmRef.removeEventListener?.('chargingchange', syncBattery);
+        bmRef.removeEventListener?.('chargingtimechange', syncBattery);
+        bmRef.removeEventListener?.('dischargingtimechange', syncBattery);
       }
     };
   }, []);
