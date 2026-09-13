@@ -591,7 +591,7 @@ function App() {
         <Command>portfolio --open</Command>
         <div className="boot-copy">
           <h1>I'VE BEEN<br/>MAKING THINGS<br/><em>FOR A WHILE.</em></h1>
-          <p>So I'm not going to make another one.</p>
+          <p>Some became projects. Some became experience. Some became lessons.</p>
         </div>
         <button className="continue" onClick={() => go('whoami')}><ArrowDown size={15}/> continue</button>
         <div className="boot-index">PERSONAL ENVIRONMENT<br/>REV. 26.09 / ONLINE</div>
