@@ -616,10 +616,13 @@ function BlackHole() {
       try {
         if (!canvas) return;
         const rect = canvas.getBoundingClientRect();
+        const parentRect = canvas.parentElement?.getBoundingClientRect();
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        width = Math.max(0, rect.width);
-        height = Math.max(0, rect.height);
-        if (width <= 0 || height <= 0) return;
+        const w = Math.max(0, rect.width || parentRect?.width || canvas.clientWidth || 0);
+        const h = Math.max(0, rect.height || parentRect?.height || canvas.clientHeight || 0);
+        if (w <= 0 || h <= 0) return;
+        width = w;
+        height = h;
         canvas.width = Math.round(width * dpr);
         canvas.height = Math.round(height * dpr);
         if (context) {
@@ -660,7 +663,10 @@ function BlackHole() {
 
     const draw = (now: number) => {
       try {
-        if (width <= 0 || height <= 0 || columns <= 0 || rows <= 0) return;
+        if (width <= 0 || height <= 0 || columns <= 0 || rows <= 0) {
+          resize();
+          if (width <= 0 || height <= 0 || columns <= 0 || rows <= 0) return;
+        }
         const elapsed = reducedMotion.matches ? 3.4 : (now - started) / 1000;
         context.clearRect(0, 0, width, height);
 
@@ -856,11 +862,18 @@ function BlackHole() {
 
     resize();
     window.addEventListener('resize', resize);
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => resize());
+      ro.observe(canvas);
+      if (canvas.parentElement) ro.observe(canvas.parentElement);
+    }
     frameId = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', resize);
+      if (ro) ro.disconnect();
     };
   }, []);
 
