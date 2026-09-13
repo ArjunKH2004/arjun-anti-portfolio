@@ -92,12 +92,12 @@ function ScrollLetterReveal({ text, breaks = [] }: { text: string; breaks?: numb
 function ProjectVisual({ slug, compact = false }: { slug: string; compact?: boolean }) {
   if (slug === 'ksrtc-workflow') return (
     <div className={`project-visual image-project-visual ${compact ? 'compact' : ''}`}>
-      <img src="/projects/ksrtc-cover.png" alt="Rethinking the KSRTC Chalo ticketing workflow case study cover" loading={compact ? 'lazy' : 'eager'}/>
+      <img src="/projects/ksrtc-cover.webp" alt="Rethinking the KSRTC Chalo ticketing workflow case study cover" loading={compact ? 'lazy' : 'eager'}/>
     </div>
   );
   if (slug === 'tejasvi-26') return (
     <div className={`project-visual image-project-visual tejasvi-project-visual ${compact ? 'compact' : ''}`}>
-      <img src="/projects/tejasvi-cover.jpg" alt="Tejasvi 26, The Ritual of Fire brand identity artwork" loading={compact ? 'lazy' : 'eager'}/>
+      <img src="/projects/tejasvi-cover.webp" alt="Tejasvi 26, The Ritual of Fire brand identity artwork" loading={compact ? 'lazy' : 'eager'}/>
     </div>
   );
   return (
