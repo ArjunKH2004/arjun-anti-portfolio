@@ -421,7 +421,6 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
     }
 
     const startedAt = performance.now();
-    let currentP = 0;
     let isFullyLoaded = document.readyState === 'complete';
 
     const onWindowLoad = () => { isFullyLoaded = true; };
@@ -443,14 +442,12 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
       return 0.15 + 0.3 * imgRatio;
     };
 
-    const tick = () => {
+    const tick = (now: number) => {
       if (!runningRef.current) return;
 
-      const targetP = computeRealProgress();
-      if (currentP < targetP) {
-        currentP = Math.min(targetP, currentP + (targetP - currentP) * 0.08 + 0.005);
-      }
-      const p = Math.min(1, currentP);
+      const timeP = Math.min(1, (now - startedAt) / 1650);
+      const realP = computeRealProgress();
+      const p = Math.min(1, Math.min(timeP, realP));
       frameNumRef.current += 1;
 
       const revealAt = Math.floor(FINAL_ASCII_ART.length * Math.min(1, p * 1.18));
