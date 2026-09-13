@@ -385,6 +385,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
     }
 
     setLeaving(true);
+    document.documentElement.classList.remove('ascii-startup-active');
     document.body.classList.remove('ascii-startup-active');
 
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -407,6 +408,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
     if (timerRef.current) clearTimeout(timerRef.current);
     setHidden(false);
     setLeaving(false);
+    document.documentElement.classList.add('ascii-startup-active');
     document.body.classList.add('ascii-startup-active');
     runningRef.current = true;
     frameNumRef.current = 0;
@@ -490,6 +492,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
       removeEventListener('keydown', onKeyDown);
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       if (timerRef.current) clearTimeout(timerRef.current);
+      document.documentElement.classList.remove('ascii-startup-active');
       document.body.classList.remove('ascii-startup-active');
     };
   }, [finish, startAnimation]);
@@ -505,6 +508,8 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
       className={`ascii-startup ${leaving ? 'is-leaving' : ''}`}
       aria-label="Portfolio startup"
       aria-live="polite"
+      onWheel={(e) => e.preventDefault()}
+      onTouchMove={(e) => e.preventDefault()}
     >
       <div className="ascii-startup__top">
         <span>KHA/PORTFOLIO_OS</span>

@@ -117,12 +117,19 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
   --startup-accent: #0077B5;
   --startup-pad: clamp(18px, 3vw, 46px);
 }
-body.ascii-startup-active { overflow: hidden; }
+html.ascii-startup-active, body.ascii-startup-active {
+  overflow: hidden !important;
+  height: 100% !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
 .ascii-startup, .ascii-startup * { box-sizing: border-box; }
 .ascii-startup {
   position: fixed;
   z-index: 9999;
   inset: 0;
+  touch-action: none;
+  overscroll-behavior: none;
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-width: 320px;
