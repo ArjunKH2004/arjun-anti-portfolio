@@ -355,6 +355,171 @@ function LiveClock() {
   );
 }
 
+const FINAL_ASCII_ART = `K   K  H   H       A       RRRR     JJJJJ  U   U  N   N
+K  K   H   H      A A      R   R      J    U   U  NN  N
+KK     HHHHH     AAAAA     RRRR       J    U   U  N N N
+K  K   H   H    A     A    R  R    J  J    U   U  N  NN
+K   K  H   H   A       A   R   R    JJ      UUU   N   N`;
+
+function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string }) {
+  const [hidden, setHidden] = useState<boolean>(true);
+  const [leaving, setLeaving] = useState<boolean>(false);
+  const [artText, setArtText] = useState<string>(FINAL_ASCII_ART);
+  const [progress, setProgress] = useState<number>(0);
+  const [stepState, setStepState] = useState<Array<'WAIT' | 'READ' | 'OK'>>(['WAIT', 'WAIT', 'WAIT']);
+  const runningRef = React.useRef<boolean>(false);
+  const frameRef = React.useRef<number>(0);
+  const timerRef = React.useRef<number>(0);
+  const frameNumRef = React.useRef<number>(0);
+
+  const noise = "/\\|+*.:01[]";
+
+  const finish = React.useCallback((remember = true) => {
+    if (!runningRef.current) return;
+    runningRef.current = false;
+    if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    if (remember) {
+      try { localStorage.setItem(storageKey, '1'); } catch {}
+    }
+
+    setLeaving(true);
+    document.body.classList.remove('ascii-startup-active');
+
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    timerRef.current = window.setTimeout(() => {
+      setHidden(true);
+      setLeaving(false);
+      document.dispatchEvent(new CustomEvent('ascii-startup:complete'));
+    }, reduced ? 0 : 190);
+  }, [storageKey]);
+
+  const startAnimation = React.useCallback((force = false) => {
+    let seen = false;
+    try { seen = localStorage.getItem(storageKey) === '1'; } catch {}
+    if (!force && seen) return;
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setHidden(false);
+    setLeaving(false);
+    document.body.classList.add('ascii-startup-active');
+    runningRef.current = true;
+    frameNumRef.current = 0;
+
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      setProgress(1);
+      setStepState(['OK', 'OK', 'OK']);
+      setArtText(FINAL_ASCII_ART);
+      timerRef.current = window.setTimeout(() => finish(), 250);
+      return;
+    }
+
+    const startedAt = performance.now();
+    const tick = (now: number) => {
+      if (!runningRef.current) return;
+      const p = Math.min(1, (now - startedAt) / 1650);
+      frameNumRef.current += 1;
+
+      const revealAt = Math.floor(FINAL_ASCII_ART.length * Math.min(1, p * 1.18));
+      const newArt = [...FINAL_ASCII_ART].map((char, index) => {
+        if (char === '\n' || char === ' ') return char;
+        if (index < revealAt) return char;
+        return noise[(index * 7 + frameNumRef.current) % noise.length];
+      }).join('');
+
+      setArtText(newArt);
+      setProgress(p);
+
+      const activeStep = Math.min(2, Math.floor(p * 3));
+      const steps: Array<'WAIT' | 'READ' | 'OK'> = [0, 1, 2].map((idx) => {
+        const isDone = idx < activeStep || p === 1;
+        const isActive = idx === activeStep && p !== 1;
+        return isDone ? 'OK' : isActive ? 'READ' : 'WAIT';
+      });
+      setStepState(steps);
+
+      if (p < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      } else {
+        timerRef.current = window.setTimeout(() => finish(), 160);
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(tick);
+  }, [finish, storageKey]);
+
+  useEffect(() => {
+    startAnimation(false);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (runningRef.current && e.key === 'Escape') finish();
+    };
+    addEventListener('keydown', onKeyDown);
+    return () => {
+      removeEventListener('keydown', onKeyDown);
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      document.body.classList.remove('ascii-startup-active');
+    };
+  }, [finish, startAnimation]);
+
+  if (hidden) return null;
+
+  const filledCount = Math.round(progress * 20);
+  const barStr = `[${'#'.repeat(filledCount)}${'.'.repeat(20 - filledCount)}]`;
+  const percentStr = `${String(Math.round(progress * 100)).padStart(3, '0')}%`;
+
+  return (
+    <section
+      className={`ascii-startup ${leaving ? 'is-leaving' : ''}`}
+      aria-label="Portfolio startup"
+      aria-live="polite"
+    >
+      <div className="ascii-startup__top">
+        <span>KHA/PORTFOLIO_OS</span>
+        <button className="ascii-startup__skip" type="button" onClick={() => finish()}>
+          SKIP
+        </button>
+      </div>
+
+      <div className="ascii-startup__core">
+        <pre className="ascii-startup__art" aria-hidden="true">
+          {artText}
+        </pre>
+
+        <div className="ascii-startup__log" aria-hidden="true">
+          <div className={`ascii-startup__row ${stepState[0] === 'READ' ? 'is-live' : ''} ${stepState[0] === 'OK' ? 'is-done' : ''}`}>
+            <span className="ascii-startup__index">01</span>
+            <span>reading working files</span>
+            <span className="ascii-startup__result">{stepState[0]}</span>
+          </div>
+          <div className={`ascii-startup__row ${stepState[1] === 'READ' ? 'is-live' : ''} ${stepState[1] === 'OK' ? 'is-done' : ''}`}>
+            <span className="ascii-startup__index">02</span>
+            <span>mapping projects and experiments</span>
+            <span className="ascii-startup__result">{stepState[1]}</span>
+          </div>
+          <div className={`ascii-startup__row ${stepState[2] === 'READ' ? 'is-live' : ''} ${stepState[2] === 'OK' ? 'is-done' : ''}`}>
+            <span className="ascii-startup__index">03</span>
+            <span>opening personal environment</span>
+            <span className="ascii-startup__result">{stepState[2]}</span>
+          </div>
+
+          <div className="ascii-startup__progress">
+            <span>{barStr}</span> <span className="ascii-startup__percent">{percentStr}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="ascii-startup__bottom">
+        <span><span className="ascii-startup__signal">●</span> LOCAL SESSION</span>
+        <span>ESC TO SKIP</span>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [showResume, setShowResume] = useState(false);
@@ -381,7 +546,7 @@ function App() {
     requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-project-trigger="${slug}"]`)?.focus());
   };
 
-  return <><div className="site-shell">
+  return <><AsciiStartup /><div className="site-shell">
     <header className="topbar">
       <button className="wordmark" onClick={() => go('boot')}>K H Arjun</button>
       <nav className="desktop-nav" aria-label="Primary navigation">
