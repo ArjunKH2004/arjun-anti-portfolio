@@ -39,11 +39,10 @@ const projects: Project[] = [
 ];
 
 const archiveItems: ArchiveItem[] = [
-  { number:'A-01', title:'Lumen Space', year:'2026-now', status:'ACTIVE', text:'A student-led creative community spanning design, media, branding, content and videography.', lesson:'I founded it to create practical workflows, workshops, collaborations and portfolio opportunities.' },
-  { number:'A-02', title:'Inspira Marian IEDC', year:'2024-25', status:'COMPLETED', text:'Two consecutive leadership tenures across creative direction, campaigns and event visuals.', lesson:'A recognisable system comes from consistent decisions made by a team.' },
-  { number:'A-03', title:'MuLearn Foundation', year:'2023-25', status:'COMPLETED', text:'Social media strategy and creative production for statewide community initiatives.', lesson:'The work connected large communities, events and organisations through clear communication.' },
-  { number:'A-04', title:'Design workshops', year:'2025-26', status:'COMPLETED', text:'Co-mentored Beyond Pixels and co-conducted the full-day Pixel Craft bootcamp.', lesson:'Explaining a design decision clearly is a different skill from making it.' },
-  { number:'A-05', title:'AI and ML foundation', year:'2022-26', status:'COMPLETED', text:'B.Tech in Artificial Intelligence and Machine Learning at Marian Engineering College.', lesson:'Technical literacy helps me ask better product questions when the interface is only the visible layer.' }
+  { number:'A-01', title:'Unique World Robotics India', year:'2025–26', status:'GRAPHIC DESIGNER', text:'Created visual assets and brand collateral across print and digital touchpoints for multiple robotics product lines.', lesson:'Experience working across different product identities while maintaining consistency across visual communication.' },
+  { number:'A-02', title:'Elenco Corporation', year:'2025', status:'GRAPHIC DESIGNER', text:'Created visual content for marketing campaigns, working within established brand systems and communication requirements.', lesson:'Experience working alongside senior designers within a structured professional design workflow.' },
+  { number:'A-03', title:'Svas.pro', year:'2025', status:'UI/UX DESIGNER', text:'Designed interfaces and interactive prototypes for a digital platform, incorporating user testing and feedback into the design process.', lesson:'Worked through Figma handoff with developers and produced 30+ social creatives, contributing to a reported 30% increase in engagement.' },
+  { number:'A-04', title:'MuLearn Foundation', year:'2023–25', status:'ASSOCIATE', text:'Worked across social media, campaigns, creative production, and community initiatives within a large student-led learning ecosystem.', lesson:'Contributed to campaigns including Global Game Jam Kerala and Perute, with reported growth in registrations and engagement.' }
 ];
 
 const systemStatements = [
@@ -642,7 +641,7 @@ function App() {
               <button onClick={() => setOpenArchive(open ? null : i)} aria-expanded={open}>
                 <span className="archive-no">{item.number}</span><h3>{item.title}</h3><span className="archive-year">{item.year}</span><span className="archive-status">{item.status}</span>{open ? <Minus/> : <Plus/>}
               </button>
-              <div className="archive-detail"><div><span>WHAT IT WAS</span><p>{item.text}</p></div><div><span>WHAT REMAINED</span><p>{item.lesson}</p></div></div>
+              <div className="archive-detail"><div><span>WHAT I DID</span><p>{item.text}</p></div><div><span>WHAT REMAINED</span><p>{item.lesson}</p></div></div>
             </article>
           })}
         </div>
