@@ -590,7 +590,7 @@ function App() {
       <section id="boot" className="boot-section">
         <Command>portfolio --open</Command>
         <div className="boot-copy">
-          <h1>YOU'VE SEEN ENOUGH<br/><em>PORTFOLIOS.</em></h1>
+          <h1>I'VE BEEN<br/>MAKING THINGS<br/><em>FOR A WHILE.</em></h1>
           <p>So I'm not going to make another one.</p>
         </div>
         <button className="continue" onClick={() => go('whoami')}><ArrowDown size={15}/> continue</button>
