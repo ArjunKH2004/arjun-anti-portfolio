@@ -9,4 +9,7 @@ import react from '@vitejs/plugin-react';
 // no outDir override needed — the plugin uses its own default layout.
 export default defineConfig({
   plugins: [cloudflare(), react()],
+  ssr: {
+    noExternal: ['@mfg-agent/apps'],
+  },
 });
