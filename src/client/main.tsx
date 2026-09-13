@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowDown, ArrowLeft, ArrowRight, Battery, Download, ExternalLink, Menu, Minus, Plus, X, Zap } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, Download, ExternalLink, Menu, Minus, Plus, X } from 'lucide-react';
 import './styles.css';
 import AsciiBlackHole, { AsciiBlackHoleErrorBoundary } from './AsciiBlackHole';
 
@@ -311,60 +311,12 @@ function ResumeDetail({ close }: { close: () => void }) {
 
 function LiveClock() {
   const [time, setTime] = useState<Date>(new Date());
-  const [battery, setBattery] = useState<{ level: number; charging: boolean } | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    let bmRef: any = null;
-    let pollTimer: any = null;
-
-    const syncBattery = () => {
-      if (bmRef) {
-        setBattery({
-          level: Math.round(bmRef.level * 100),
-          charging: bmRef.charging,
-        });
-      }
-    };
-
-    if ('getBattery' in navigator && typeof (navigator as any).getBattery === 'function') {
-      (navigator as any).getBattery().then((bm: any) => {
-        bmRef = bm;
-        syncBattery();
-
-        bm.onlevelchange = syncBattery;
-        bm.onchargingchange = syncBattery;
-        bm.onchargingtimechange = syncBattery;
-        bm.ondischargingtimechange = syncBattery;
-
-        bm.addEventListener?.('levelchange', syncBattery);
-        bm.addEventListener?.('chargingchange', syncBattery);
-        bm.addEventListener?.('chargingtimechange', syncBattery);
-        bm.addEventListener?.('dischargingtimechange', syncBattery);
-
-        pollTimer = setInterval(syncBattery, 3000);
-      }).catch(() => {});
-    }
-
-    return () => {
-      if (pollTimer) clearInterval(pollTimer);
-      if (bmRef) {
-        bmRef.onlevelchange = null;
-        bmRef.onchargingchange = null;
-        bmRef.onchargingtimechange = null;
-        bmRef.ondischargingtimechange = null;
-        bmRef.removeEventListener?.('levelchange', syncBattery);
-        bmRef.removeEventListener?.('chargingchange', syncBattery);
-        bmRef.removeEventListener?.('chargingtimechange', syncBattery);
-        bmRef.removeEventListener?.('dischargingtimechange', syncBattery);
-      }
-    };
   }, []);
 
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -395,20 +347,11 @@ function LiveClock() {
   const period = (partsMap.dayPeriod || 'AM').toUpperCase();
 
   return (
-    <div className="live-clock" title="Current IST Time & Device Battery">
+    <div className="live-clock" title="Current IST Time & Date">
       <span className="clock-date">{dayName} {dayNum} {monthName} {year}</span>
       <span className="clock-sep">/</span>
       <span className="clock-time">{hours}:{minutes}:{seconds} {period}</span>
       <span className="clock-tz">IST</span>
-      {battery !== null && (
-        <>
-          <span className="clock-sep">/</span>
-          <span className="clock-battery" title={`Device Battery: ${battery.level}%${battery.charging ? ' (Charging)' : ''}`}>
-            {battery.charging ? <Zap size={10} className="battery-zap" /> : <Battery size={11} className="battery-icon" />}
-            <span>{battery.level}%</span>
-          </span>
-        </>
-      )}
     </div>
   );
 }
