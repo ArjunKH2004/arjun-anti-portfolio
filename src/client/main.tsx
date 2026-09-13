@@ -570,6 +570,25 @@ function heroHashNoise(x: number, y: number, seed = 0) {
   return ((n ^ (n >>> 16)) & 0xffff) / 65536;
 }
 
+class BlackHoleErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any) {
+    console.warn('BlackHole rendering fallback active:', error);
+  }
+  render() {
+    if (this.state.hasError) {
+      return null;
+    }
+    return this.props.children;
+  }
+}
+
 function BlackHole() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -594,18 +613,26 @@ function BlackHole() {
     }));
 
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = rect.width;
-      height = rect.height;
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      columns = Math.ceil(width / HERO_CELL_W);
-      rows = Math.ceil(height / HERO_CELL_H);
-      context.font = `500 ${HERO_CELL_H}px "Mona Sans Mono", "IBM Plex Mono", "SFMono-Regular", Consolas, monospace`;
-      context.textBaseline = 'middle';
-      context.textAlign = 'center';
+      try {
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = Math.max(0, rect.width);
+        height = Math.max(0, rect.height);
+        if (width <= 0 || height <= 0) return;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        if (context) {
+          context.setTransform(dpr, 0, 0, dpr, 0, 0);
+          context.font = `500 ${HERO_CELL_H}px "Mona Sans Mono", "IBM Plex Mono", "SFMono-Regular", Consolas, monospace`;
+          context.textBaseline = 'middle';
+          context.textAlign = 'center';
+        }
+        columns = Math.max(1, Math.ceil(width / HERO_CELL_W));
+        rows = Math.max(1, Math.ceil(height / HERO_CELL_H));
+      } catch (err) {
+        // Safe resize guard
+      }
     };
 
     const colorFor = (intensity: number, region: string) => {
@@ -887,7 +914,9 @@ function App() {
         <div className="hero-composition">
           <h1>I'VE BEEN MAKING THINGS FOR A WHILE.</h1>
           <div className="visual">
-            <BlackHole />
+            <BlackHoleErrorBoundary>
+              <BlackHole />
+            </BlackHoleErrorBoundary>
           </div>
           <p className="hero-subtext">Some became projects. Some became experience. Some became lessons.</p>
         </div>
