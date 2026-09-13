@@ -451,7 +451,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
   }, [finish, storageKey]);
 
   useEffect(() => {
-    startAnimation(false);
+    startAnimation(true);
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (runningRef.current && e.key === 'Escape') finish();
