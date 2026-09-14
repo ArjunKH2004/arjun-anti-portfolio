@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowDown, ArrowLeft, ArrowRight, Download, ExternalLink, Menu, Minus, Plus, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, Camera, Download, ExternalLink, Menu, Minus, Plus, Volume2, VolumeX, X } from 'lucide-react';
 import './styles.css';
 import AsciiBlackHole, { AsciiBlackHoleErrorBoundary } from './AsciiBlackHole';
 
@@ -384,7 +384,6 @@ function VisitorCounter() {
       }
     }
 
-    // Increment exactly once (+1) per page load / refresh
     current += 1;
     localStorage.setItem(LOCAL_KEY, String(current));
     setCount(current);
@@ -399,6 +398,37 @@ function VisitorCounter() {
         <span className="visitor-count-label">YOU'RE VISITOR NUMBER:</span>
         <span className="visitor-count-num">{formatted}</span>
       </div>
+    </div>
+  );
+}
+
+function AboutPhoto() {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div className="about-photo-frame">
+      {!imgError ? (
+        <img
+          src="/arjun-photo.jpg"
+          alt="Arjun KH - Product Designer"
+          className="about-photo-img"
+          onError={() => setImgError(true)}
+        />
+      ) : null}
+      {imgError && (
+        <div className="about-photo-placeholder">
+          <div className="photo-ph-icon">
+            <Camera size={26} />
+          </div>
+          <span className="photo-ph-title">PHOTO PLACEHOLDER</span>
+          <p className="photo-ph-desc">Add <code>arjun-photo.jpg</code> to <code>/public</code></p>
+          <div className="photo-ph-specs">
+            <span>RECOMMENDED DIMENSIONS</span>
+            <strong>800 × 1000 px</strong>
+            <small>(4:5 Portrait Ratio)</small>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -773,7 +803,10 @@ function App() {
       <section id="about" className="about-section section-pad">
         <Command>cat /about</Command>
         <div className="about-grid">
-          <ScrollLetterReveal text="WHO'S BEHIND ALL THIS?" breaks={[13]}/>
+          <div className="about-left-col">
+            <ScrollLetterReveal text="WHO'S BEHIND ALL THIS?" breaks={[13]}/>
+            <AboutPhoto />
+          </div>
           <div className="about-copy"><p>I'm Arjun, a product designer working across UI/UX, interaction design and visual communication. I use field research, journey mapping and prototypes to turn evidence into clearer decisions.</p><dl><div><dt>NOW</dt><dd>UX Design Intern<br/>Experion Technologies</dd></div><div><dt>BASED</dt><dd>Kerala, India<br/>Open to junior product design opportunities</dd></div><div><dt>EXPERIENCE</dt><dd>2+ years across product, brand and digital communication</dd></div><div><dt>EDUCATION</dt><dd>B.Tech, Artificial Intelligence and Machine Learning</dd></div></dl></div>
         </div>
       </section>
