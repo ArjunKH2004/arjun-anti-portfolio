@@ -614,7 +614,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
       onTouchMove={(e) => e.preventDefault()}
     >
       <div className="ascii-startup__top">
-        <span>KHA/PORTFOLIO_OS</span>
+        <span>SAVYASACHI/VIS-CON_OS</span>
       </div>
 
       <div className="ascii-startup__core">
@@ -646,7 +646,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
       </div>
 
       <div className="ascii-startup__bottom">
-        <span><span className="ascii-startup__signal">●</span> LOCAL SESSION</span>
+        <span><span className="ascii-startup__signal">●</span> ONLINE</span>
       </div>
     </section>
   );
