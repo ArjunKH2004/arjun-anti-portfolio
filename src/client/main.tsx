@@ -740,9 +740,6 @@ function App() {
         <div className="site-footer">
           <div className="site-footer-grid">
             <div className="footer-col-bio">
-              <p className="footer-bio-text">
-                I help teams turn vague ideas into products people actually want. Based in Kerala — open to opportunities.
-              </p>
               <a href="mailto:kharjun48@gmail.com" className="footer-talk-btn">
                 Let's talk <ArrowUpRight size={18} />
               </a>
