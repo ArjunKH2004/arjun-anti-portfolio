@@ -708,7 +708,7 @@ function App() {
           <p className="hero-subtext">Some became projects. Some became experience. Some became lessons.</p>
         </div>
         <button className="continue" onClick={() => go('who-am-i')}><ArrowDown size={15}/> continue</button>
-        <div className="boot-index">PERSONAL ENVIRONMENT<br/>REV. 26.09 / ONLINE</div>
+        <div className="boot-index">PERSONAL ENVIRONMENT<br/>v.14.10 / ONLINE</div>
       </section>
 
       <section id="who-am-i" className="who-section section-pad">
