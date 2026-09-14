@@ -662,7 +662,7 @@ function App() {
   const [section, setSection] = useState('boot');
 
   useEffect(() => {
-    const ids = ['boot', 'who-am-i', 'projects', 'archive', 'about', 'next', 'contact'];
+    const ids = ['boot', 'who-am-i', 'projects', 'archive', 'about', 'contact'];
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => entry.isIntersecting && setSection(entry.target.id));
     }, { rootMargin: '-30% 0px -60% 0px' });
@@ -684,7 +684,7 @@ function App() {
     <header className="topbar">
       <button className="wordmark" onClick={() => go('boot')}>K H Arjun</button>
       <nav className="desktop-nav" aria-label="Primary navigation">
-        {['projects', 'archive', 'about', 'next', 'contact'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => go(item)}>/{item}</button>)}
+        {['projects', 'archive', 'about', 'contact'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => go(item)}>/{item}</button>)}
       </nav>
       <div className="topbar-right">
         <LiveClock />
@@ -693,7 +693,7 @@ function App() {
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>
 
-    {mobileNav && <div className="mobile-nav">{['projects','archive','about','next','contact'].map((item, i) => <button key={item} onClick={() => go(item)}><span>0{i+1}</span>/{item}<ArrowRight/></button>)}</div>}
+    {mobileNav && <div className="mobile-nav">{['projects','archive','about','contact'].map((item, i) => <button key={item} onClick={() => go(item)}><span>0{i+1}</span>/{item}<ArrowRight/></button>)}</div>}
 
     <main>
       <section id="boot" className="boot-section">
@@ -780,15 +780,6 @@ function App() {
           ))}
         </div>
         <p className="tools-line"><span>Things I use along the way:</span> Figma, code, research, paper, and unreasonable amounts of iteration.</p>
-      </section>
-
-      <section id="next" className="next-plans-section section-pad">
-        <Command>cat /next</Command>
-        <div className="next-plans-heading"><ScrollLetterReveal text="WHERE THIS IS HEADING." breaks={[14]}/><span>FUTURE PLANS<br/>NOT ARRIVALS</span></div>
-        <div className="next-plans-list">
-          <article><span>01 / EDUCATION</span><h2>PURSUE A MASTER'S<br/>ABROAD.</h2><p>Go deeper into UX, experience a different design culture, and learn in an environment that changes how I see the work.</p><small>STATUS / PLANNING</small></article>
-          <article><span>02 / PRODUCT STUDIO</span><h2>BUILD A PRODUCT<br/>STUDIO OF MY OWN.</h2><p>The long-term plan is to start an independent product studio for turning early ideas into useful, well-considered products.</p><small>STATUS / GREENLIT</small></article>
-        </div>
       </section>
 
       <section className="resume-section section-pad">
