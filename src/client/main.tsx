@@ -305,15 +305,130 @@ function ResumeDetail({ close }: { close: () => void }) {
 
 
 
+function getAsciiClockGrid(partsMap: Record<string, string>, ms: number) {
+  const COLS = 25;
+  const ROWS = 13;
+  const cx = 12;
+  const cy = 6;
+
+  const grid: Array<Array<{ char: string; type: string }>> = Array.from({ length: ROWS }, () =>
+    Array.from({ length: COLS }, () => ({ char: ' ', type: 'bg' }))
+  );
+
+  const R_x = 10.2;
+  const R_y = 5.2;
+
+  const numbers = [
+    { num: '12', a: -Math.PI / 2 },
+    { num: '1',  a: -Math.PI / 3 },
+    { num: '2',  a: -Math.PI / 6 },
+    { num: '3',  a: 0 },
+    { num: '4',  a: Math.PI / 6 },
+    { num: '5',  a: Math.PI / 3 },
+    { num: '6',  a: Math.PI / 2 },
+    { num: '7',  a: (2 * Math.PI) / 3 },
+    { num: '8',  a: (5 * Math.PI) / 6 },
+    { num: '9',  a: Math.PI },
+    { num: '10', a: -(5 * Math.PI) / 6 },
+    { num: '11', a: -(2 * Math.PI) / 3 },
+  ];
+
+  numbers.forEach(({ num, a }) => {
+    const x = Math.round(cx + R_x * Math.cos(a));
+    const y = Math.round(cy + R_y * Math.sin(a));
+    if (y >= 0 && y < ROWS) {
+      if (num.length === 1) {
+        if (x >= 0 && x < COLS) grid[y][x] = { char: num, type: 'num' };
+      } else {
+        const sx = x - 1;
+        if (sx >= 0 && sx + 1 < COLS) {
+          grid[y][sx] = { char: num[0], type: 'num' };
+          grid[y][sx + 1] = { char: num[1], type: 'num' };
+        }
+      }
+    }
+  });
+
+  const rawHr = parseInt(partsMap.hour || '12', 10) % 12;
+  const rawMin = parseInt(partsMap.minute || '0', 10);
+  const rawSec = parseInt(partsMap.second || '0', 10);
+  const secFloat = rawSec + ms / 1000;
+  const minFloat = rawMin + secFloat / 60;
+  const hrFloat = rawHr + minFloat / 60;
+
+  const aSec = (secFloat / 60) * 2 * Math.PI - Math.PI / 2;
+  const aMin = (minFloat / 60) * 2 * Math.PI - Math.PI / 2;
+  const aHr = (hrFloat / 12) * 2 * Math.PI - Math.PI / 2;
+
+  // Second hand (L = 8.5)
+  for (let d = 1; d <= 8.5; d += 0.5) {
+    const x = Math.round(cx + d * Math.cos(aSec));
+    const y = Math.round(cy + d * 0.52 * Math.sin(aSec));
+    if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+      if (grid[y][x].type !== 'num') {
+        grid[y][x] = { char: '•', type: 'sec' };
+      }
+    }
+  }
+
+  // Minute hand (L = 6.5)
+  for (let d = 1; d <= 6.5; d += 0.5) {
+    const x = Math.round(cx + d * Math.cos(aMin));
+    const y = Math.round(cy + d * 0.52 * Math.sin(aMin));
+    if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+      if (grid[y][x].type !== 'num') {
+        grid[y][x] = { char: 'M', type: 'min' };
+      }
+    }
+  }
+
+  // Hour hand (L = 4.2)
+  for (let d = 1; d <= 4.2; d += 0.5) {
+    const x = Math.round(cx + d * Math.cos(aHr));
+    const y = Math.round(cy + d * 0.52 * Math.sin(aHr));
+    if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+      if (grid[y][x].type !== 'num') {
+        grid[y][x] = { char: 'H', type: 'hr' };
+      }
+    }
+  }
+
+  // Center hub
+  grid[cy][cx] = { char: '●', type: 'center' };
+
+  return grid;
+}
+
 function LiveClock() {
   const [time, setTime] = useState<Date>(new Date());
+  const [expanded, setExpanded] = useState<boolean>(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const interval = expanded ? 100 : 1000;
     const timer = setInterval(() => {
       setTime(new Date());
-    }, 1000);
+    }, interval);
     return () => clearInterval(timer);
-  }, []);
+  }, [expanded]);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setExpanded(false);
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setExpanded(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [expanded]);
 
   const formatter = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Kolkata',
@@ -342,12 +457,66 @@ function LiveClock() {
   const seconds = partsMap.second || '00';
   const period = (partsMap.dayPeriod || 'AM').toUpperCase();
 
+  const grid = expanded ? getAsciiClockGrid(partsMap, time.getMilliseconds()) : null;
+
   return (
-    <div className="live-clock" title="Current IST Time & Date">
-      <span className="clock-date">{dayName} {dayNum} {monthName} {year}</span>
-      <span className="clock-sep">/</span>
-      <span className="clock-time">{hours}:{minutes}:{seconds} {period}</span>
-      <span className="clock-tz">IST</span>
+    <div className={`live-clock-wrapper ${expanded ? 'is-expanded' : ''}`} ref={containerRef}>
+      {!expanded ? (
+        <div
+          className="live-clock live-clock--clickable"
+          onClick={() => setExpanded(true)}
+          title="Click to view ASCII Analog Clock"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(true); } }}
+        >
+          <span className="clock-date">{dayName} {dayNum} {monthName} {year}</span>
+          <span className="clock-sep">/</span>
+          <span className="clock-time">{hours}:{minutes}:{seconds} {period}</span>
+          <span className="clock-tz">IST</span>
+          <span className="clock-expand-hint">ANALOG ↗</span>
+        </div>
+      ) : (
+        <div className="ascii-clock-modal">
+          <div className="ascii-clock-header">
+            <div className="ascii-clock-title">
+              <span className="ascii-startup__signal">●</span> VIS-CON ANALOG CLOCK
+            </div>
+            <button
+              className="ascii-clock-close"
+              onClick={(e) => { e.stopPropagation(); setExpanded(false); }}
+              aria-label="Close analog clock"
+            >
+              <X size={14} />
+            </button>
+          </div>
+
+          <div className="ascii-clock-body">
+            <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
+              {grid?.map((row, rIdx) => (
+                <div key={rIdx} className="ascii-clock-row">
+                  {row.map((cell, cIdx) => (
+                    <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
+                      {cell.char}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </pre>
+          </div>
+
+          <div className="ascii-clock-footer">
+            <div className="ascii-clock-legend">
+              <span className="legend-item hr"><span className="legend-key">H</span> HOUR</span>
+              <span className="legend-item min"><span className="legend-key">M</span> MINUTE</span>
+              <span className="legend-item sec"><span className="legend-key">•</span> SECOND</span>
+            </div>
+            <div className="ascii-clock-digital">
+              {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
