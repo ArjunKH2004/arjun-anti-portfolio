@@ -359,36 +359,35 @@ function VisitorCounter() {
   const [count, setCount] = useState<number>(() => {
     const LOCAL_KEY = 'kha_visitor_count';
     const stored = localStorage.getItem(LOCAL_KEY);
-    let val = 3;
     if (stored) {
       const parsed = parseInt(stored, 10);
       if (!isNaN(parsed) && parsed >= 3) {
-        val = parsed;
+        return parsed;
       }
     }
-    // Increment visitor count on every refresh / page load
-    val += 1;
-    localStorage.setItem(LOCAL_KEY, String(val));
-    return val;
+    return 3;
   });
 
-  useEffect(() => {
-    const LOCAL_KEY = 'kha_visitor_count';
+  const hasIncrementedRef = React.useRef(false);
 
-    // Increment central online counter on every visit when online
-    fetch('https://api.counterapi.dev/v2/test/test/up')
-      .then(res => res.json())
-      .then(res => {
-        const upCount = res?.data?.up_count;
-        if (typeof upCount === 'number' && upCount > 0) {
-          setCount(prev => {
-            const nextVal = Math.max(prev, upCount);
-            localStorage.setItem(LOCAL_KEY, String(nextVal));
-            return nextVal;
-          });
-        }
-      })
-      .catch(() => {});
+  useEffect(() => {
+    if (hasIncrementedRef.current) return;
+    hasIncrementedRef.current = true;
+
+    const LOCAL_KEY = 'kha_visitor_count';
+    const stored = localStorage.getItem(LOCAL_KEY);
+    let current = 3;
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!isNaN(parsed) && parsed >= 3) {
+        current = parsed;
+      }
+    }
+
+    // Increment exactly once (+1) per page load / refresh
+    current += 1;
+    localStorage.setItem(LOCAL_KEY, String(current));
+    setCount(current);
   }, []);
 
   const formatted = String(count).padStart(4, '0');
