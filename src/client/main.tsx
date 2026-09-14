@@ -403,32 +403,9 @@ function VisitorCounter() {
 }
 
 function AboutPhoto() {
-  const [imgError, setImgError] = useState(false);
-
   return (
-    <div className="about-photo-frame">
-      {!imgError ? (
-        <img
-          src="/arjun-photo.jpg"
-          alt="Arjun KH - Product Designer"
-          className="about-photo-img"
-          onError={() => setImgError(true)}
-        />
-      ) : null}
-      {imgError && (
-        <div className="about-photo-placeholder">
-          <div className="photo-ph-icon">
-            <Camera size={26} />
-          </div>
-          <span className="photo-ph-title">PHOTO PLACEHOLDER</span>
-          <p className="photo-ph-desc">Add <code>arjun-photo.jpg</code> to <code>/public</code></p>
-          <div className="photo-ph-specs">
-            <span>RECOMMENDED DIMENSIONS</span>
-            <strong>800 × 1000 px</strong>
-            <small>(4:5 Portrait Ratio)</small>
-          </div>
-        </div>
-      )}
+    <div className="about-photo-rectangle" aria-label="Photo placeholder rectangle">
+      <span className="photo-rect-label">[ PHOTO PLACEHOLDER ]</span>
     </div>
   );
 }
