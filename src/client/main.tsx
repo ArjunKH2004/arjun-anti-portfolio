@@ -799,6 +799,7 @@ function App() {
               <li><a href="https://behance.net/arjunkh" target="_blank" rel="noreferrer">Behance</a></li>
               <li><a href="https://www.instagram.com/a.rjunnn._/" target="_blank" rel="noreferrer">Instagram</a></li>
               <li><a href="https://wa.me/918848043184" target="_blank" rel="noreferrer">WhatsApp</a></li>
+              <li><a href="https://buymeacoffee.com/kharjun" target="_blank" rel="noreferrer">Buy Me a Coffee</a></li>
             </ul>
           </div>
 
