@@ -819,7 +819,7 @@ function App() {
             <ScrollLetterReveal text="WHO'S BEHIND ALL THIS?" breaks={[13]}/>
             <AboutSlideshow />
           </div>
-          <div className="about-copy"><p>I'm Arjun, a product designer working across UI/UX, interaction design and visual communication. I use field research, journey mapping and prototypes to turn evidence into clearer decisions.</p><dl><div><dt>NOW</dt><dd>UX Design Intern<br/>Experion Technologies</dd></div><div><dt>BASED</dt><dd>Kerala, India<br/>Open to junior product design opportunities</dd></div><div><dt>EXPERIENCE</dt><dd>2+ years across product, brand and digital communication</dd></div><div><dt>EDUCATION</dt><dd>B.Tech, Artificial Intelligence and Machine Learning</dd></div></dl></div>
+          <div className="about-copy"><p>I'm Arjun, a product designer working across UI/UX, interaction design and visual communication. I use field research, journey mapping and prototypes to turn evidence into clearer decisions.</p><dl><div><dt>NOW</dt><dd>UX Design Intern<br/>Experion Technologies</dd></div><div><dt>BASED</dt><dd>Kerala, India<br/>Open to junior product design opportunities</dd></div><div><dt>EXPERIENCE</dt><dd>2+ years across product, brand and digital communication</dd></div><div><dt>EDUCATION</dt><dd>B.Tech in Artificial Intelligence & Machine Learning<br/>Marian Engineering College, affiliated to APJ Abdul Kalam Technological University</dd></div></dl></div>
         </div>
       </section>
 
