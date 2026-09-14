@@ -101,11 +101,8 @@ function ProjectVisual({ slug, compact = false }: { slug: string; compact?: bool
     </div>
   );
   return (
-    <div className={`project-visual useful-visual ${compact ? 'compact' : ''}`} aria-label="Almost Useful experiments preview">
-      <div className="tool-card card-one"><span>should this<br/>be a meeting?</span><b>probably not.</b></div>
-      <div className="tool-card card-two"><span>tiny decision<br/>machine</span><b>flip → keep</b></div>
-      <div className="tool-card card-three"><span>tab debt</span><b>37 / concerning</b></div>
-      <div className="useful-label">GROWIT / PRODUCT DESIGN</div>
+    <div className={`project-visual image-project-visual growit-project-visual ${compact ? 'compact' : ''}`}>
+      <img src="/projects/growit-cover.png" alt="GrowIt - Unified Platform for Mutual Fund Distributors" loading={compact ? 'lazy' : 'eager'}/>
     </div>
   );
 }
