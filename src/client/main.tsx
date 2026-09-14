@@ -713,7 +713,7 @@ function App() {
 
       <section id="who-am-i" className="who-section section-pad">
         <Command>who-am-i</Command>
-        <div className="section-heading who-heading"><ScrollLetterReveal text="HERE'S WHAT I ACTUALLY WANT YOU TO KNOW." breaks={[23]}/><span>03 STATEMENTS<br/>NO BIOGRAPHY</span></div>
+        <div className="section-heading who-heading"><ScrollLetterReveal text="HERE'S WHAT I ACTUALLY WANT YOU TO KNOW." breaks={[23]}/></div>
         <div className="statements">
           {systemStatements.map(s => <article key={s.n} className="statement"><div className="statement-header"><span>{s.n}</span><h2>{s.title}</h2></div><p>{s.copy}</p></article>)}
         </div>
@@ -769,7 +769,6 @@ function App() {
         <Command>./what-i-do</Command>
         <div className="section-heading capabilities-heading">
           <ScrollLetterReveal text="I CAN HELP WITH" breaks={[6]}/>
-          <span>05 CAPABILITIES<br/>WHAT I DO</span>
         </div>
         <div className="statements capabilities-statements">
           {capabilitiesList.map(s => (
