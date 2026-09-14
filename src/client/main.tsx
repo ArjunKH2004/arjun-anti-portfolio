@@ -358,32 +358,41 @@ function VisitorCounter() {
     const stored = localStorage.getItem(LOCAL_KEY);
     if (stored) {
       const parsed = parseInt(stored, 10);
-      if (!isNaN(parsed) && parsed >= 3) {
+      if (!isNaN(parsed) && parsed >= 1) {
         return parsed;
       }
     }
-    return 3;
+    return 1;
   });
 
-  const hasIncrementedRef = React.useRef(false);
+  const hasExecutedRef = React.useRef(false);
 
   useEffect(() => {
-    if (hasIncrementedRef.current) return;
-    hasIncrementedRef.current = true;
+    if (hasExecutedRef.current) return;
+    hasExecutedRef.current = true;
 
+    const SESSION_KEY = 'kha_session_recorded';
     const LOCAL_KEY = 'kha_visitor_count';
-    const stored = localStorage.getItem(LOCAL_KEY);
-    let current = 3;
-    if (stored) {
-      const parsed = parseInt(stored, 10);
-      if (!isNaN(parsed) && parsed >= 3) {
-        current = parsed;
-      }
+    const isNewSession = !sessionStorage.getItem(SESSION_KEY);
+    const endpoint = isNewSession
+      ? 'https://countapi.mileshilliard.com/api/v1/hit/arjunkh_anti_portfolio_visits_v1'
+      : 'https://countapi.mileshilliard.com/api/v1/get/arjunkh_anti_portfolio_visits_v1';
+
+    if (isNewSession) {
+      sessionStorage.setItem(SESSION_KEY, 'true');
     }
 
-    current += 1;
-    localStorage.setItem(LOCAL_KEY, String(current));
-    setCount(current);
+    fetch(endpoint)
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.value === 'number' && data.value >= 1) {
+          setCount(data.value);
+          localStorage.setItem(LOCAL_KEY, String(data.value));
+        }
+      })
+      .catch(err => {
+        console.warn('Visitor counter API unreachable, falling back to local count:', err);
+      });
   }, []);
 
   const formatted = String(count).padStart(4, '0');
