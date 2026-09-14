@@ -402,10 +402,53 @@ function VisitorCounter() {
   );
 }
 
-function AboutPhoto() {
+const SLIDESHOW_PHOTOS = [
+  '/photos/arjun-1.jpg',
+  '/photos/arjun-2.jpg',
+  '/photos/arjun-3.jpg',
+  '/photos/arjun-4.jpg',
+  '/photos/arjun-5.jpg',
+];
+
+function AboutSlideshow() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % SLIDESHOW_PHOTOS.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="about-photo-rectangle" aria-label="Photo placeholder rectangle">
-      <span className="photo-rect-label">[ PHOTO PLACEHOLDER ]</span>
+    <div className="vhs-slideshow-container" aria-label="Arjun KH photo slideshow with CRT VHS scanlines filter">
+      <div className="vhs-slideshow-track">
+        {SLIDESHOW_PHOTOS.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt={`Arjun KH portrait ${index + 1}`}
+            className={`vhs-slide-img ${index === currentIndex ? 'is-active' : ''}`}
+          />
+        ))}
+      </div>
+
+      {/* CRT Scanlines & Old VHS TV Retro Filter */}
+      <div className="vhs-crt-overlay" aria-hidden="true">
+        <div className="vhs-scanlines" />
+        <div className="vhs-vignette" />
+        <div className="vhs-static-beam" />
+
+        <div className="vhs-osd-top">
+          <span className="vhs-rec"><i className="vhs-rec-dot" />PLAY ▶</span>
+          <span className="vhs-ch">SP 0:03</span>
+        </div>
+        <div className="vhs-osd-bottom">
+          <span className="vhs-label">AUTO TRACKING</span>
+          <span className="vhs-counter">0{currentIndex + 1} / 0{SLIDESHOW_PHOTOS.length}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -782,7 +825,7 @@ function App() {
         <div className="about-grid">
           <div className="about-left-col">
             <ScrollLetterReveal text="WHO'S BEHIND ALL THIS?" breaks={[13]}/>
-            <AboutPhoto />
+            <AboutSlideshow />
           </div>
           <div className="about-copy"><p>I'm Arjun, a product designer working across UI/UX, interaction design and visual communication. I use field research, journey mapping and prototypes to turn evidence into clearer decisions.</p><dl><div><dt>NOW</dt><dd>UX Design Intern<br/>Experion Technologies</dd></div><div><dt>BASED</dt><dd>Kerala, India<br/>Open to junior product design opportunities</dd></div><div><dt>EXPERIENCE</dt><dd>2+ years across product, brand and digital communication</dd></div><div><dt>EDUCATION</dt><dd>B.Tech, Artificial Intelligence and Machine Learning</dd></div></dl></div>
         </div>
