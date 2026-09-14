@@ -60,7 +60,7 @@ const capabilitiesList = [
 ];
 
 function Command({ children }: { children: React.ReactNode }) {
-  return <div className="command"><span className="command-user">arjun@internet</span><span>:~$</span> {children}</div>;
+  return <div className="command"><span className="command-user">kharjun@internet</span><span>:~$</span> {children}</div>;
 }
 
 function ScrollLetterReveal({ text, breaks = [] }: { text: string; breaks?: number[] }) {
