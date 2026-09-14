@@ -813,7 +813,7 @@ function App() {
           </div>
 
           <div className="site-footer-bottom">
-            <span>ARJUN / PRODUCT DESIGNER</span>
+            <span>Arjun here!</span>
             <span>DESIGNED TO BE EXPLORED.<br/>BUILT TO GET OUT OF THE WAY.</span>
             <button onClick={() => go('boot')} className="btn-back-to-top">↑ top</button>
           </div>
