@@ -356,41 +356,42 @@ function LiveClock() {
 }
 
 function VisitorCounter() {
-  const [count, setCount] = useState<number | null>(null);
-
-  useEffect(() => {
+  const [count, setCount] = useState<number>(() => {
     const LOCAL_KEY = 'kha_visitor_count';
-    const SESSION_KEY = 'kha_visited_session';
-
-    let current = 3;
     const stored = localStorage.getItem(LOCAL_KEY);
+    let val = 3;
     if (stored) {
       const parsed = parseInt(stored, 10);
       if (!isNaN(parsed) && parsed >= 3) {
-        current = parsed;
+        val = parsed;
       }
     }
+    // Increment visitor count on every refresh / page load
+    val += 1;
+    localStorage.setItem(LOCAL_KEY, String(val));
+    return val;
+  });
 
-    if (!sessionStorage.getItem(SESSION_KEY)) {
-      current += 1;
-      sessionStorage.setItem(SESSION_KEY, 'true');
-      localStorage.setItem(LOCAL_KEY, String(current));
-    }
-    setCount(current);
+  useEffect(() => {
+    const LOCAL_KEY = 'kha_visitor_count';
 
-    fetch('https://api.counterapi.dev/v1/arjun-anti-portfolio/visits/up')
+    // Increment central online counter on every visit when online
+    fetch('https://api.counterapi.dev/v2/test/test/up')
       .then(res => res.json())
-      .then(data => {
-        if (data && typeof data.count === 'number' && data.count > 0) {
-          const remoteCount = Math.max(data.count + 2, current);
-          setCount(remoteCount);
-          localStorage.setItem(LOCAL_KEY, String(remoteCount));
+      .then(res => {
+        const upCount = res?.data?.up_count;
+        if (typeof upCount === 'number' && upCount > 0) {
+          setCount(prev => {
+            const nextVal = Math.max(prev, upCount);
+            localStorage.setItem(LOCAL_KEY, String(nextVal));
+            return nextVal;
+          });
         }
       })
       .catch(() => {});
   }, []);
 
-  const formatted = String(count ?? 3).padStart(4, '0');
+  const formatted = String(count).padStart(4, '0');
 
   return (
     <div className="visitor-count" title="Visitor Count">
