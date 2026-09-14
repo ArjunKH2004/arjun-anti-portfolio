@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowDown, ArrowLeft, ArrowRight, Download, ExternalLink, Menu, Minus, Moon, Plus, Sun, X } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, Download, ExternalLink, Menu, Minus, Plus, X } from 'lucide-react';
 import './styles.css';
 import AsciiBlackHole, { AsciiBlackHoleErrorBoundary } from './AsciiBlackHole';
 
@@ -602,24 +602,6 @@ function App() {
   const [mobileNav, setMobileNav] = useState(false);
   const [section, setSection] = useState('boot');
 
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('kha_theme');
-      if (saved === 'light' || saved === 'dark') return saved;
-      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-    }
-    return 'dark';
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('kha_theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
   useEffect(() => {
     const ids = ['boot', 'who-am-i', 'projects', 'archive', 'about', 'next', 'contact'];
     const observer = new IntersectionObserver((entries) => {
@@ -648,14 +630,6 @@ function App() {
       <div className="topbar-right">
         <LiveClock />
         <VisitorCounter />
-        <button
-          className="theme-toggle"
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-          {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
-        </button>
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>

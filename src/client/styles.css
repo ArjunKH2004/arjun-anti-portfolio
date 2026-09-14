@@ -99,48 +99,6 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 @media(max-width:820px){.visitor-count-label{font-size:7.5px}.visitor-count-num{font-size:13px}}
 @media(max-width:480px){.visitor-count-label{display:none}.visitor-count-num::before{content:"VISITOR NO: ";font-size:8px;color:var(--muted);font-weight:500}}
 
-/* Theme toggle button styling */
-.theme-toggle{background:var(--surface-2);border:1px solid var(--rule);border-radius:6px;color:var(--ink);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:all .18s ease;flex-shrink:0}
-.theme-toggle:hover{border-color:var(--acid);color:var(--acid);transform:scale(1.05)}
-.theme-toggle:active{transform:scale(0.95)}
-
-/* Light Mode Color Inversion System */
-[data-theme="light"]{--paper:#f4f1e8;--surface:#e8e4d8;--surface-2:#ded9c8;--ink:#111110;--muted:#66635a;--rule:#d5d0c0;--acid:#0077B5;--cobalt:#005596;--topbar-bg:rgba(244,241,232,.94);color-scheme:light}
-[data-theme="light"] body{background:var(--paper);color:var(--ink)}
-[data-theme="light"] .topbar{background:var(--topbar-bg);border-bottom-color:var(--rule)}
-[data-theme="light"] .wordmark,[data-theme="light"] .desktop-nav button.active,[data-theme="light"] .desktop-nav button:hover,[data-theme="light"] .continue{color:var(--ink)}
-[data-theme="light"] .desktop-nav button{color:var(--muted)}
-[data-theme="light"] .desktop-nav button:after{background:var(--ink)}
-[data-theme="light"] .hero-composition h1{color:var(--ink)}
-[data-theme="light"] .hero-subtext{color:var(--muted)}
-[data-theme="light"] .section-pad{border-top-color:var(--rule)}
-[data-theme="light"] .section-heading>span,[data-theme="light"] .next-plans-heading>span{color:var(--muted);border-top-color:var(--rule)}
-[data-theme="light"] .statement{border-color:var(--rule)}
-[data-theme="light"] .work-section{background:#e5e1d4;color:var(--ink)}
-[data-theme="light"] .work-section .section-heading>span{border-color:var(--rule);color:var(--muted)}
-[data-theme="light"] .project-list,[data-theme="light"] .project-row{border-color:var(--rule)}
-[data-theme="light"] .project-row h2,[data-theme="light"] .project-row>p,[data-theme="light"] .open-command{color:var(--ink)}
-[data-theme="light"] .project-meta{color:var(--muted)}
-[data-theme="light"] .archive-section{background:#ded9c9;color:var(--ink)}
-[data-theme="light"] .archive-list,[data-theme="light"] .archive-item{border-color:var(--rule)}
-[data-theme="light"] .archive-item.open{background:#d4cebc}
-[data-theme="light"] .about-section{background:#e8e3d5;color:var(--ink)}
-[data-theme="light"] .about-copy dl,[data-theme="light"] .about-copy dl div{border-color:var(--rule)}
-[data-theme="light"] .capabilities-section{background:var(--paper);color:var(--ink)}
-[data-theme="light"] .next-plans-section{background:#e2ddd0;color:var(--ink)}
-[data-theme="light"] .next-plans-list,[data-theme="light"] .next-plans-list article{border-color:var(--rule)}
-[data-theme="light"] .next-plans-list article p{color:var(--muted)}
-[data-theme="light"] .next-plans-list article small{border-top-color:var(--rule)}
-[data-theme="light"] .project-card-grid,[data-theme="light"] .project-card-grid .project-card{border-color:var(--rule)}
-[data-theme="light"] .contact-section{background:#f8f6f0;color:var(--ink)}
-[data-theme="light"] .site-footer{border-top-color:var(--rule)}
-[data-theme="light"] .footer-link-list button,[data-theme="light"] .footer-link-list a{color:var(--ink)}
-[data-theme="light"] .site-footer-bottom{border-top-color:var(--rule);color:var(--muted)}
-[data-theme="light"] .site-footer-bottom .btn-back-to-top{color:var(--ink)}
-[data-theme="light"] .scroll-letter-reveal span{color:#d6d1c2}
-[data-theme="light"] .scroll-letter-reveal span.revealed{color:#111110}
-[data-theme="light"] .live-clock{background:var(--surface-2);border-color:var(--rule);color:var(--muted)}
-[data-theme="light"] .live-clock .clock-date,[data-theme="light"] .live-clock .clock-time{color:var(--ink)}
 
 /* Works-style Resume Pop-up Modal */
 .resume-modal{--project-accent:#0077B5}
