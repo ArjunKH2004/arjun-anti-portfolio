@@ -440,7 +440,6 @@ function AboutSlideshow() {
         <div className="vhs-vignette" />
         <div className="vhs-cool-tint" />
         <div className="vhs-static-beam" />
-        <div className="vhs-distortion-line" />
       </div>
     </div>
   );
@@ -467,25 +466,30 @@ function OstPlayer() {
       });
     };
 
+    // Attempt playback immediately on mount
+    startPlayback();
+
     const onStartupComplete = () => {
       startPlayback();
     };
 
     document.addEventListener('ascii-startup:complete', onStartupComplete);
 
-    const handleFirstInteraction = () => {
-      if (audioRef.current && audioRef.current.paused && !userMutedRef.current) {
-        startPlayback();
-      }
+    const handleInteraction = () => {
+      startPlayback();
     };
 
-    window.addEventListener('click', handleFirstInteraction);
-    window.addEventListener('keydown', handleFirstInteraction);
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('keydown', handleInteraction);
+    window.addEventListener('pointerdown', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction);
 
     return () => {
       document.removeEventListener('ascii-startup:complete', onStartupComplete);
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      window.removeEventListener('pointerdown', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
       audio.pause();
       audioRef.current = null;
     };
@@ -649,7 +653,15 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
   React.useLayoutEffect(() => {
     startAnimation(true);
 
+    const handleKeyOrClick = () => {
+      finish();
+    };
+    window.addEventListener('keydown', handleKeyOrClick);
+    window.addEventListener('click', handleKeyOrClick);
+
     return () => {
+      window.removeEventListener('keydown', handleKeyOrClick);
+      window.removeEventListener('click', handleKeyOrClick);
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       if (timerRef.current) clearTimeout(timerRef.current);
       document.documentElement.classList.remove('ascii-startup-active');
@@ -668,6 +680,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
       className={`ascii-startup ${leaving ? 'is-leaving' : ''}`}
       aria-label="Portfolio startup"
       aria-live="polite"
+      onClick={() => finish()}
       onWheel={(e) => e.preventDefault()}
       onTouchMove={(e) => e.preventDefault()}
     >
