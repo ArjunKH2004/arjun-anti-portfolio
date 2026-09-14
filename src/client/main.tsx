@@ -489,13 +489,12 @@ function LiveClock() {
           <span className="clock-sep">/</span>
           <span className="clock-time">{hours}:{minutes}:{seconds} {period}</span>
           <span className="clock-tz">IST</span>
-          <span className="clock-expand-hint">ANALOG ↗</span>
         </div>
       ) : (
         <div className="ascii-clock-modal">
           <div className="ascii-clock-header">
             <div className="ascii-clock-title">
-              <span className="ascii-startup__signal">●</span> VIS-CON ANALOG CLOCK
+              <span className="ascii-startup__signal">●</span> CLOCK
             </div>
             <button
               className="ascii-clock-close"
