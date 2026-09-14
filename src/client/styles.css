@@ -85,7 +85,7 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 
 /* VHS CRT Overlay & Photo Slideshow Styling */
 .vhs-slideshow-container{width:100%;max-width:400px;aspect-ratio:4/5;border-radius:6px;overflow:hidden;position:relative;background:#0d0d0c;border:1px solid rgba(23,23,20,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.25);margin-top:6px;user-select:none}
-.vhs-slideshow-track{width:100%;height:100%;position:relative}
+.vhs-slideshow-track{width:100%;height:100%;position:relative;animation:crtSyncGlitch 4s linear infinite}
 .vhs-slide-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.8s ease-in-out;filter:contrast(1.04) saturate(0.95) brightness(0.97) hue-rotate(8deg)}
 .vhs-slide-img.is-active{opacity:1}
 
@@ -95,7 +95,9 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 .vhs-vignette{position:absolute;inset:0;background:radial-gradient(circle at center,rgba(0,0,0,0) 55%,rgba(0,0,0,0.45) 85%,rgba(0,0,0,0.75) 100%)}
 .vhs-cool-tint{position:absolute;inset:0;background:rgba(10,80,160,0.08);mix-blend-mode:color;pointer-events:none}
 .vhs-static-beam{position:absolute;left:0;right:0;height:8px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.12) 50%,rgba(255,255,255,0) 100%);animation:vhsBeam 4s linear infinite;mix-blend-mode:overlay}
+.vhs-distortion-line{position:absolute;left:0;right:0;height:12px;top:-10%;animation:vhsBeam 4s linear infinite;backdrop-filter:contrast(1.2) brightness(1.08) hue-rotate(20deg);mix-blend-mode:hard-light;pointer-events:none;z-index:11;box-shadow:0 0 6px rgba(0,255,200,0.2)}
 @keyframes vhsBeam{0%{top:-10%}100%{top:110%}}
+@keyframes crtSyncGlitch{0%,100%{transform:translateX(0)}22%{transform:translateX(0)}23.5%{transform:translateX(2px) skewX(0.4deg)}25%{transform:translateX(-1px)}26.5%{transform:translateX(0)}67%{transform:translateX(0)}68.5%{transform:translateX(-2.5px) skewX(-0.5deg)}70%{transform:translateX(1px)}71.5%{transform:translateX(0)}}
 
 @media(max-width:1050px){.about-grid{grid-template-columns:1fr}.about-left-col{margin-bottom:50px}.about-left-col .scroll-letter-reveal{font-size:clamp(48px,9vw,78px)}.about-copy{padding-left:0}}@media(max-width:650px){.about-left-col .scroll-letter-reveal{font-size:clamp(40px,12vw,56px)}}
 

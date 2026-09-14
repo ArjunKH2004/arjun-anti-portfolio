@@ -440,6 +440,7 @@ function AboutSlideshow() {
         <div className="vhs-vignette" />
         <div className="vhs-cool-tint" />
         <div className="vhs-static-beam" />
+        <div className="vhs-distortion-line" />
       </div>
     </div>
   );
