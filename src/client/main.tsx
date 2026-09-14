@@ -350,26 +350,26 @@ function getAsciiClockGrid(partsMap: Record<string, string>, ms: number) {
   numbers.forEach(({ num, a }) => {
     const x = Math.round(cx + R * Math.cos(a));
     const y = Math.round(cy + R * Math.sin(a));
-    if (y >= 0 && y < ROWS) {
-      if (num.length === 1) {
-        if (x >= 0 && x < COLS) grid[y][x] = { char: num, type: 'num' };
-      } else {
-        const sx = x - 1;
-        if (sx >= 0 && sx + 1 < COLS) {
-          grid[y][sx] = { char: num[0], type: 'num' };
-          grid[y][sx + 1] = { char: num[1], type: 'num' };
-        }
-      }
+    if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+      grid[y][x] = { char: num, type: 'num' };
     }
   });
 
-  const hrStr = partsMap.hour || '12';
-  const minStr = partsMap.minute || '00';
-  const secStr = partsMap.second || '00';
+  // Perimeter separators '•' between numbers
+  for (let k = 0; k < 12; k++) {
+    const aSep = ((k + 0.5) / 12) * 2 * Math.PI - Math.PI / 2;
+    const x = Math.round(cx + R * Math.cos(aSep));
+    const y = Math.round(cy + R * Math.sin(aSep));
+    if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+      if (grid[y][x].type === 'bg') {
+        grid[y][x] = { char: '•', type: 'sep' };
+      }
+    }
+  }
 
-  const rawHr = parseInt(hrStr, 10) % 12;
-  const rawMin = parseInt(minStr, 10);
-  const rawSec = parseInt(secStr, 10);
+  const rawHr = parseInt(partsMap.hour || '12', 10) % 12;
+  const rawMin = parseInt(partsMap.minute || '0', 10);
+  const rawSec = parseInt(partsMap.second || '0', 10);
   const secFloat = rawSec + ms / 1000;
   const minFloat = rawMin + secFloat / 60;
   const hrFloat = rawHr + minFloat / 60;
@@ -380,30 +380,30 @@ function getAsciiClockGrid(partsMap: Record<string, string>, ms: number) {
 
   // Second hand (L = 6.6)
   const secCells = getRayCells(cx, cy, aSec, 6.6);
-  secCells.forEach(({ x, y }, i) => {
+  secCells.forEach(({ x, y }) => {
     if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
-      if (grid[y][x].type !== 'num') {
-        grid[y][x] = { char: secStr[i % secStr.length], type: 'sec' };
+      if (grid[y][x].type !== 'num' && grid[y][x].type !== 'sep') {
+        grid[y][x] = { char: '•', type: 'sec' };
       }
     }
   });
 
   // Minute hand (L = 5.6)
   const minCells = getRayCells(cx, cy, aMin, 5.6);
-  minCells.forEach(({ x, y }, i) => {
+  minCells.forEach(({ x, y }) => {
     if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
-      if (grid[y][x].type !== 'num') {
-        grid[y][x] = { char: minStr[i % minStr.length], type: 'min' };
+      if (grid[y][x].type !== 'num' && grid[y][x].type !== 'sep') {
+        grid[y][x] = { char: 'M', type: 'min' };
       }
     }
   });
 
   // Hour hand (L = 3.8)
   const hrCells = getRayCells(cx, cy, aHr, 3.8);
-  hrCells.forEach(({ x, y }, i) => {
+  hrCells.forEach(({ x, y }) => {
     if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
-      if (grid[y][x].type !== 'num') {
-        grid[y][x] = { char: hrStr[i % hrStr.length], type: 'hr' };
+      if (grid[y][x].type !== 'num' && grid[y][x].type !== 'sep') {
+        grid[y][x] = { char: 'H', type: 'hr' };
       }
     }
   });
@@ -411,7 +411,7 @@ function getAsciiClockGrid(partsMap: Record<string, string>, ms: number) {
   // Center hub
   grid[cy][cx] = { char: '●', type: 'center' };
 
-  return { grid, hrStr, minStr, secStr };
+  return grid;
 }
 
 function LiveClock() {
@@ -472,7 +472,7 @@ function LiveClock() {
   const seconds = partsMap.second || '00';
   const period = (partsMap.dayPeriod || 'AM').toUpperCase();
 
-  const clockData = expanded ? getAsciiClockGrid(partsMap, time.getMilliseconds()) : null;
+  const grid = expanded ? getAsciiClockGrid(partsMap, time.getMilliseconds()) : null;
 
   return (
     <div className={`live-clock-wrapper ${expanded ? 'is-expanded' : ''}`} ref={containerRef}>
@@ -507,7 +507,7 @@ function LiveClock() {
 
           <div className="ascii-clock-body">
             <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
-              {clockData?.grid.map((row, rIdx) => (
+              {grid?.map((row, rIdx) => (
                 <div key={rIdx} className="ascii-clock-row">
                   {row.map((cell, cIdx) => (
                     <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
@@ -521,9 +521,9 @@ function LiveClock() {
 
           <div className="ascii-clock-footer">
             <div className="ascii-clock-legend">
-              <span className="legend-item hr"><span className="legend-key">{clockData?.hrStr || hours}</span> HOUR</span>
-              <span className="legend-item min"><span className="legend-key">{clockData?.minStr || minutes}</span> MINUTE</span>
-              <span className="legend-item sec"><span className="legend-key">{clockData?.secStr || seconds}</span> SECOND</span>
+              <span className="legend-item hr"><span className="legend-key">H</span> HOUR</span>
+              <span className="legend-item min"><span className="legend-key">M</span> MINUTE</span>
+              <span className="legend-item sec"><span className="legend-key">•</span> SECOND</span>
             </div>
             <div className="ascii-clock-digital">
               {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST

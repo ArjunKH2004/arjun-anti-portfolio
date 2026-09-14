@@ -243,6 +243,11 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
   font-weight: 700;
   text-shadow: 0 0 8px rgba(237, 124, 34, 0.9);
 }
+.clock-cell-sep {
+  color: var(--muted);
+  opacity: 0.45;
+  font-size: 9px;
+}
 .clock-cell-bg {
   color: transparent;
 }
