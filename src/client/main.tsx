@@ -471,7 +471,6 @@ function OstPlayer() {
       className={`ost-toggle ${muted ? 'is-muted' : 'is-playing'}`}
       onClick={toggleMute}
       aria-label={muted ? 'Unmute audio' : 'Mute audio'}
-      title={muted ? 'Unmute OST (Home - Resonance)' : 'Mute OST (Home - Resonance)'}
     >
       {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
     </button>
