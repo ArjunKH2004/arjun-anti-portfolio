@@ -438,16 +438,8 @@ function AboutSlideshow() {
       <div className="vhs-crt-overlay" aria-hidden="true">
         <div className="vhs-scanlines" />
         <div className="vhs-vignette" />
+        <div className="vhs-cool-tint" />
         <div className="vhs-static-beam" />
-
-        <div className="vhs-osd-top">
-          <span className="vhs-rec"><i className="vhs-rec-dot" />PLAY ▶</span>
-          <span className="vhs-ch">SP 0:03</span>
-        </div>
-        <div className="vhs-osd-bottom">
-          <span className="vhs-label">AUTO TRACKING</span>
-          <span className="vhs-counter">0{currentIndex + 1} / 0{SLIDESHOW_PHOTOS.length}</span>
-        </div>
       </div>
     </div>
   );

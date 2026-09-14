@@ -86,24 +86,16 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 /* VHS CRT Overlay & Photo Slideshow Styling */
 .vhs-slideshow-container{width:100%;max-width:400px;aspect-ratio:4/5;border-radius:6px;overflow:hidden;position:relative;background:#0d0d0c;border:1px solid rgba(23,23,20,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.25);margin-top:6px;user-select:none}
 .vhs-slideshow-track{width:100%;height:100%;position:relative}
-.vhs-slide-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.03);transition:opacity 0.8s ease-in-out,transform 3s ease-out;filter:contrast(1.06) saturate(1.1) brightness(0.96)}
-.vhs-slide-img.is-active{opacity:1;transform:scale(1)}
+.vhs-slide-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.8s ease-in-out;filter:contrast(1.04) saturate(0.95) brightness(0.97) hue-rotate(8deg)}
+.vhs-slide-img.is-active{opacity:1}
 
 /* CRT Scanlines and VHS Texture Overlay */
-.vhs-crt-overlay{position:absolute;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column;justify-content:space-between;padding:16px;box-sizing:border-box}
+.vhs-crt-overlay{position:absolute;inset:0;pointer-events:none;z-index:10;box-sizing:border-box}
 .vhs-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 2px,rgba(0,0,0,0.32) 3px,rgba(0,0,0,0.32) 4px);mix-blend-mode:overlay;opacity:0.88}
 .vhs-vignette{position:absolute;inset:0;background:radial-gradient(circle at center,rgba(0,0,0,0) 55%,rgba(0,0,0,0.45) 85%,rgba(0,0,0,0.75) 100%)}
+.vhs-cool-tint{position:absolute;inset:0;background:rgba(10,80,160,0.08);mix-blend-mode:color;pointer-events:none}
 .vhs-static-beam{position:absolute;left:0;right:0;height:8px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.12) 50%,rgba(255,255,255,0) 100%);animation:vhsBeam 4s linear infinite;mix-blend-mode:overlay}
 @keyframes vhsBeam{0%{top:-10%}100%{top:110%}}
-
-/* On-Screen Display (OSD) Badges */
-.vhs-osd-top,.vhs-osd-bottom{position:relative;z-index:12;display:flex;justify-content:space-between;align-items:center;font:700 11px/1 var(--mono);color:#00ff66;text-shadow:0 0 6px rgba(0,255,102,0.6),1px 1px 2px rgba(0,0,0,0.9);letter-spacing:.08em;text-transform:uppercase}
-.vhs-rec{display:inline-flex;align-items:center;gap:6px}
-.vhs-rec-dot{width:7px;height:7px;background:#ff2a2a;border-radius:50%;box-shadow:0 0 8px #ff2a2a;animation:vhsRecBlink 1.2s infinite steps(1)}
-@keyframes vhsRecBlink{0%,100%{opacity:1}50%{opacity:0}}
-.vhs-ch{font-size:10px;color:#ffffff;text-shadow:0 0 5px rgba(255,255,255,0.8),1px 1px 2px rgba(0,0,0,0.9)}
-.vhs-label{font-size:9px;color:rgba(255,255,255,0.7);letter-spacing:.1em}
-.vhs-counter{font-size:11px;color:#00ff66}
 
 @media(max-width:1050px){.about-grid{grid-template-columns:1fr}.about-left-col{margin-bottom:50px}.about-left-col .scroll-letter-reveal{font-size:clamp(48px,9vw,78px)}.about-copy{padding-left:0}}@media(max-width:650px){.about-left-col .scroll-letter-reveal{font-size:clamp(40px,12vw,56px)}}
 
