@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowDown, ArrowLeft, ArrowRight, Camera, Download, ExternalLink, Menu, Minus, Plus, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Camera, Download, ExternalLink, Menu, Minus, Plus, Volume2, VolumeX, X } from 'lucide-react';
 import './styles.css';
 import AsciiBlackHole, { AsciiBlackHoleErrorBoundary } from './AsciiBlackHole';
 
@@ -687,7 +687,6 @@ function App() {
         {['projects', 'archive', 'about', 'contact'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => go(item)}>/{item}</button>)}
       </nav>
       <div className="topbar-right">
-        <LiveClock />
         <VisitorCounter />
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
@@ -707,7 +706,6 @@ function App() {
           </div>
           <p className="hero-subtext">Some became projects. Some became experience. Some became lessons.</p>
         </div>
-        <button className="continue" onClick={() => go('who-am-i')}><ArrowDown size={15}/> continue</button>
         <div className="boot-index">PERSONAL ENVIRONMENT<br/>v.14.10 / ONLINE</div>
       </section>
 
@@ -810,6 +808,9 @@ function App() {
         </div>
       </section>
     </main>
+    <div className="fixed-live-clock">
+      <LiveClock />
+    </div>
   </div>
   {activeProject && <ProjectDetail project={activeProject} close={closeProject}/>}
   {showResume && <ResumeDetail close={() => setShowResume(false)}/>}
