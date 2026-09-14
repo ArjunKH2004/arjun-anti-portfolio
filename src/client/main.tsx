@@ -736,48 +736,48 @@ function App() {
       <section id="contact" className="contact-section section-pad">
         <Command>./contact</Command>
         <ScrollLetterReveal text="IF YOU HAVE A PROBLEM WORTH SOLVING, LET'S TALK." breaks={[21,36]}/>
+
+        <div className="site-footer">
+          <div className="site-footer-grid">
+            <div className="footer-col-bio">
+              <p className="footer-bio-text">
+                I help teams turn vague ideas into products people actually want. Based in Kerala — open to opportunities.
+              </p>
+              <a href="mailto:kharjun48@gmail.com" className="footer-talk-btn">
+                Let's talk <ArrowUpRight size={18} />
+              </a>
+            </div>
+
+            <div className="footer-col-nav">
+              <span className="footer-col-label">PAGES</span>
+              <ul className="footer-link-list">
+                <li><button onClick={() => go('boot')}>Home</button></li>
+                <li><button onClick={() => go('about')}>About</button></li>
+                <li><button onClick={() => go('projects')}>Work</button></li>
+                <li><button onClick={() => setShowResume(true)}>Resume</button></li>
+                <li><button onClick={() => go('contact')}>Contact</button></li>
+              </ul>
+            </div>
+
+            <div className="footer-col-connect">
+              <span className="footer-col-label">CONNECT</span>
+              <ul className="footer-link-list">
+                <li><a href="https://linkedin.com/in/kharjun" target="_blank" rel="noreferrer">LinkedIn</a></li>
+                <li><a href="https://behance.net/arjunkh" target="_blank" rel="noreferrer">Behance</a></li>
+                <li><a href="https://dribbble.com" target="_blank" rel="noreferrer">Dribbble</a></li>
+                <li><a href="https://medium.com" target="_blank" rel="noreferrer">Medium</a></li>
+                <li><a href="https://wa.me/?text=Hi%20Arjun" target="_blank" rel="noreferrer">WhatsApp</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="site-footer-bottom">
+            <span>ARJUN / PRODUCT DESIGNER</span>
+            <span>DESIGNED TO BE EXPLORED.<br/>BUILT TO GET OUT OF THE WAY.</span>
+            <button onClick={() => go('boot')} className="btn-back-to-top">↑ top</button>
+          </div>
+        </div>
       </section>
-
-      <footer className="site-footer">
-        <div className="site-footer-inner">
-          <div className="footer-col-main">
-            <p className="footer-bio">
-              I help teams turn vague ideas into products people actually want. Based in Kerala – open to opportunities.
-            </p>
-            <a href="mailto:kharjun48@gmail.com" className="footer-talk-btn">
-              Let's talk <ArrowUpRight size={18} />
-            </a>
-          </div>
-
-          <div className="footer-col-nav">
-            <span className="footer-col-title">PAGES</span>
-            <ul className="footer-links">
-              <li><button onClick={() => go('boot')}>Home</button></li>
-              <li><button onClick={() => go('about')}>About</button></li>
-              <li><button onClick={() => go('projects')}>Work</button></li>
-              <li><button onClick={(e) => { e.preventDefault(); setShowResume(true); }}>Resume</button></li>
-              <li><button onClick={() => go('contact')}>Contact</button></li>
-            </ul>
-          </div>
-
-          <div className="footer-col-nav">
-            <span className="footer-col-title">CONNECT</span>
-            <ul className="footer-links">
-              <li><a href="https://linkedin.com/in/kharjun" target="_blank" rel="noreferrer">LinkedIn</a></li>
-              <li><a href="https://behance.net/arjunkh" target="_blank" rel="noreferrer">Behance</a></li>
-              <li><a href="https://dribbble.com" target="_blank" rel="noreferrer">Dribbble</a></li>
-              <li><a href="https://medium.com" target="_blank" rel="noreferrer">Medium</a></li>
-              <li><a href="https://wa.me/" target="_blank" rel="noreferrer">WhatsApp</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="site-footer-bottom">
-          <span>ARJUN / PRODUCT DESIGNER</span>
-          <span>DESIGNED TO BE EXPLORED. BUILT TO GET OUT OF THE WAY.</span>
-          <button className="footer-back-top" onClick={() => go('boot')}>↑ top</button>
-        </div>
-      </footer>
     </main>
   </div>
   {activeProject && <ProjectDetail project={activeProject} close={closeProject}/>}
