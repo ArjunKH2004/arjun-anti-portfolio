@@ -63,9 +63,7 @@ export default function AsciiBlackHole() {
     let frameId = 0;
     let lastFrame = 0;
     const pointer = { x: -1000, y: -1000, active: false };
-    const lastPointer = { x: -1000, y: -1000 };
-    type TrailPoint = { x: number; y: number; intensity: number; radius: number };
-    const trail: TrailPoint[] = [];
+    const started = performance.now();
 
     // Expanded particle cloud across multiple orbital planes
     const particles = Array.from({ length: 32 }, (_, index) => ({
@@ -104,44 +102,15 @@ export default function AsciiBlackHole() {
     const updatePointer = (event: PointerEvent) => {
       if (event.pointerType === 'touch') return;
       const rect = canvas.getBoundingClientRect();
-      const px = event.clientX - rect.left;
-      const py = event.clientY - rect.top;
-      const currentGlowRadius = width < 500 ? 68 : 102;
-
-      if (pointer.active && lastPointer.x > -500) {
-        const dx = px - lastPointer.x;
-        const dy = py - lastPointer.y;
-        const dist = Math.hypot(dx, dy);
-        const steps = Math.min(10, Math.max(1, Math.floor(dist / 8)));
-        for (let i = 1; i <= steps; i++) {
-          const t = i / steps;
-          trail.push({
-            x: lastPointer.x + dx * t,
-            y: lastPointer.y + dy * t,
-            intensity: 1.0,
-            radius: currentGlowRadius * (0.88 + Math.random() * 0.2),
-          });
-        }
-      } else {
-        trail.push({
-          x: px,
-          y: py,
-          intensity: 1.0,
-          radius: currentGlowRadius,
-        });
-      }
-
-      lastPointer.x = px;
-      lastPointer.y = py;
-      pointer.x = px;
-      pointer.y = py;
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
       pointer.active = true;
     };
 
     const clearPointer = () => {
       pointer.active = false;
-      lastPointer.x = -1000;
-      lastPointer.y = -1000;
+      pointer.x = -1000;
+      pointer.y = -1000;
     };
 
     const colorFor = (intensity: number, region: string, glow = 0) => {
@@ -178,14 +147,6 @@ export default function AsciiBlackHole() {
         const elapsed = reducedMotion.matches ? 3.4 : (now - started) / 1000;
         context.clearRect(0, 0, width, height);
 
-        // Decay trail points for trailing after effect
-        for (let i = trail.length - 1; i >= 0; i--) {
-          trail[i].intensity *= 0.89;
-          if (trail[i].intensity < 0.02) {
-            trail.splice(i, 1);
-          }
-        }
-
         const cx = width * 0.5;
         const cy = height * 0.5;
 
@@ -197,20 +158,9 @@ export default function AsciiBlackHole() {
         const diskHalfHeight = Math.max(24, horizon * 0.38);
         const glowRadius = width < 500 ? 68 : 102;
         const glowAt = (x: number, y: number) => {
-          let maxGlow = 0;
-          if (pointer.active) {
-            const distance = Math.hypot(x - pointer.x, y - pointer.y);
-            maxGlow = Math.max(maxGlow, clamp(1 - distance / glowRadius) ** 2);
-          }
-          for (let i = 0; i < trail.length; i++) {
-            const pt = trail[i];
-            const dist = Math.hypot(x - pt.x, y - pt.y);
-            if (dist < pt.radius) {
-              const ptGlow = (clamp(1 - dist / pt.radius) ** 2) * pt.intensity;
-              if (ptGlow > maxGlow) maxGlow = ptGlow;
-            }
-          }
-          return maxGlow;
+          if (!pointer.active) return 0;
+          const distance = Math.hypot(x - pointer.x, y - pointer.y);
+          return clamp(1 - distance / glowRadius) ** 2;
         };
 
         for (let row = 0; row < rows; row += 1) {
