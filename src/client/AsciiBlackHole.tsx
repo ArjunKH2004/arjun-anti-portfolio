@@ -153,7 +153,8 @@ export default function AsciiBlackHole() {
         // 20% expanded physical radii dimensions
         const horizon = Math.max(84, Math.min(width / 6.5, height / 2.45));
         const ringRadius = horizon * 1.18;
-        const diskRadius = Math.min(width * 0.62, horizon * 7.5);
+        // Extended disk radius covering 100% canvas width from left to right edge
+        const diskRadius = Math.max(width * 0.52, horizon * 9.2);
         const diskHalfHeight = Math.max(24, horizon * 0.38);
         const glowRadius = width < 500 ? 68 : 102;
         const glowAt = (x: number, y: number) => {
@@ -174,27 +175,39 @@ export default function AsciiBlackHole() {
             let region = '';
             let glyph = '';
 
-            // Enhanced background star field
+            // Dense background star & cosmic particle field filling left and right space
             const starNoise = hashNoise(column + Math.floor(elapsed * 0.55), row, 31);
-            if (starNoise > 0.988 && radius > horizon * 1.6) {
-              intensity = 0.14 + 0.34 * (0.5 + 0.5 * Math.sin(elapsed * 1.5 + column * 1.61 + row));
+            if (starNoise > 0.976 && radius > horizon * 1.3) {
+              intensity = 0.16 + 0.38 * (0.5 + 0.5 * Math.sin(elapsed * 1.5 + column * 1.61 + row));
               region = 'star';
-              glyph = intensity > 0.36 ? '+' : '.';
+              glyph = intensity > 0.38 ? '+' : intensity > 0.24 ? '*' : '.';
             }
 
-            const radialPosition = Math.abs(x) / diskRadius;
+            const radialPosition = Math.abs(x) / (width * 0.5);
             const turbulentWarp = Math.sin(x * 0.018 - elapsed * 1.4) * diskHalfHeight * 0.16;
             const warpedY = y - turbulentWarp;
 
-            const dustHalfHeight = diskHalfHeight * 2.55 * Math.max(0.06, 1 - radialPosition);
-            if (Math.abs(x) < diskRadius && Math.abs(warpedY) < dustHalfHeight && radius > horizon * 1.02) {
+            // Outer dust envelope extending all the way across left and right edges
+            const dustHalfHeight = diskHalfHeight * 2.8 * Math.max(0.22, 1 - 0.65 * radialPosition);
+            if (Math.abs(warpedY) < dustHalfHeight && radius > horizon * 1.02) {
               const dustVertical = Math.abs(warpedY) / Math.max(dustHalfHeight, 1);
               const dustNoise = hashNoise(column + Math.floor(elapsed * 4), row, 73);
-              const dustIntensity = clamp((1 - radialPosition) * (1 - dustVertical) * (0.22 + dustNoise * 0.48));
-              if (dustIntensity > intensity && dustNoise > 0.22) {
+              const dustIntensity = clamp((1 - 0.4 * radialPosition) * (1 - dustVertical) * (0.24 + dustNoise * 0.52));
+              if (dustIntensity > intensity && dustNoise > 0.18) {
                 intensity = dustIntensity;
                 region = 'dust';
                 glyph = GLYPHS[Math.max(1, Math.floor(dustIntensity * (GLYPHS.length - 1)))];
+              }
+            }
+
+            // Outer flank accretion stream extending to screen left/right boundaries
+            const outerFlankNoise = hashNoise(column + Math.floor(elapsed * 2.5), row, 409);
+            if (Math.abs(x) > horizon * 1.2 && Math.abs(warpedY) < dustHalfHeight * 1.2) {
+              const outerIntensity = clamp((1 - Math.abs(warpedY) / (dustHalfHeight * 1.2)) * (0.18 + outerFlankNoise * 0.44));
+              if (outerIntensity > intensity && outerFlankNoise > 0.28) {
+                intensity = outerIntensity;
+                region = 'dust';
+                glyph = GLYPHS[Math.max(1, Math.floor(outerIntensity * (GLYPHS.length - 1)))];
               }
             }
 
