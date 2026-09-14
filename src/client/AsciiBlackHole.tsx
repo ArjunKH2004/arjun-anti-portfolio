@@ -177,10 +177,10 @@ export default function AsciiBlackHole() {
 
             // Dense background star & cosmic particle field filling left and right space
             const starNoise = hashNoise(column + Math.floor(elapsed * 0.55), row, 31);
-            if (starNoise > 0.976 && radius > horizon * 1.3) {
-              intensity = 0.16 + 0.38 * (0.5 + 0.5 * Math.sin(elapsed * 1.5 + column * 1.61 + row));
+            if (starNoise > 0.952 && radius > horizon * 1.1) {
+              intensity = 0.18 + 0.42 * (0.5 + 0.5 * Math.sin(elapsed * 1.5 + column * 1.61 + row));
               region = 'star';
-              glyph = intensity > 0.38 ? '+' : intensity > 0.24 ? '*' : '.';
+              glyph = intensity > 0.42 ? '+' : intensity > 0.28 ? '*' : intensity > 0.18 ? ':' : '.';
             }
 
             const radialPosition = Math.abs(x) / (width * 0.5);
@@ -188,12 +188,12 @@ export default function AsciiBlackHole() {
             const warpedY = y - turbulentWarp;
 
             // Outer dust envelope extending all the way across left and right edges
-            const dustHalfHeight = diskHalfHeight * 2.8 * Math.max(0.22, 1 - 0.65 * radialPosition);
+            const dustHalfHeight = diskHalfHeight * 3.2 * Math.max(0.38, 1 - 0.45 * radialPosition);
             if (Math.abs(warpedY) < dustHalfHeight && radius > horizon * 1.02) {
               const dustVertical = Math.abs(warpedY) / Math.max(dustHalfHeight, 1);
               const dustNoise = hashNoise(column + Math.floor(elapsed * 4), row, 73);
-              const dustIntensity = clamp((1 - 0.4 * radialPosition) * (1 - dustVertical) * (0.24 + dustNoise * 0.52));
-              if (dustIntensity > intensity && dustNoise > 0.18) {
+              const dustIntensity = clamp((1 - 0.15 * radialPosition) * (1 - dustVertical) * (0.3 + dustNoise * 0.58));
+              if (dustIntensity > intensity && dustNoise > 0.12) {
                 intensity = dustIntensity;
                 region = 'dust';
                 glyph = GLYPHS[Math.max(1, Math.floor(dustIntensity * (GLYPHS.length - 1)))];
@@ -202,9 +202,9 @@ export default function AsciiBlackHole() {
 
             // Outer flank accretion stream extending to screen left/right boundaries
             const outerFlankNoise = hashNoise(column + Math.floor(elapsed * 2.5), row, 409);
-            if (Math.abs(x) > horizon * 1.2 && Math.abs(warpedY) < dustHalfHeight * 1.2) {
-              const outerIntensity = clamp((1 - Math.abs(warpedY) / (dustHalfHeight * 1.2)) * (0.18 + outerFlankNoise * 0.44));
-              if (outerIntensity > intensity && outerFlankNoise > 0.28) {
+            if (Math.abs(x) > horizon * 1.0 && Math.abs(warpedY) < dustHalfHeight * 1.3) {
+              const outerIntensity = clamp((1 - Math.abs(warpedY) / (dustHalfHeight * 1.3)) * (0.24 + outerFlankNoise * 0.52));
+              if (outerIntensity > intensity && outerFlankNoise > 0.16) {
                 intensity = outerIntensity;
                 region = 'dust';
                 glyph = GLYPHS[Math.max(1, Math.floor(outerIntensity * (GLYPHS.length - 1)))];
