@@ -411,7 +411,8 @@ function OstPlayer() {
   useEffect(() => {
     const audio = new Audio('/resonance-ost.mp3');
     audio.loop = true;
-    audio.volume = 0.55;
+    audio.volume = 0.25;
+    audio.muted = false;
     audioRef.current = audio;
 
     const startPlayback = () => {
