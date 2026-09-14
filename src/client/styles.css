@@ -207,6 +207,144 @@ html.ascii-startup-active, body.ascii-startup-active {
 @media (prefers-reduced-motion: reduce) { .ascii-startup { transition-duration: 0.01ms; } }
 @media (forced-colors: active) { .ascii-startup__skip, .startup-replay { border: 1px solid; } }
 
+/* Custom Modern 3-Column Footer */
+.site-footer {
+  background: var(--paper);
+  color: var(--ink);
+  border-top: 1px solid var(--rule);
+  padding: 80px 4vw 40px;
+  font-family: var(--sans);
+}
+
+.site-footer-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 50px 8vw;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.footer-col-main {
+  max-width: 440px;
+}
+
+.footer-bio {
+  font-size: clamp(18px, 2.2vw, 24px);
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 32px 0;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.footer-talk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #171715;
+  color: #ffffff;
+  padding: 14px 26px;
+  border-radius: 12px;
+  font: 500 15px/1 var(--sans);
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.footer-talk-btn:hover {
+  background: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  color: #ffffff;
+}
+
+.footer-col-title {
+  display: block;
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.08em;
+  color: #888680;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links button,
+.footer-links a {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: 400 17px/1.3 var(--sans);
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.18s ease, transform 0.18s ease;
+  display: inline-block;
+}
+
+.footer-links button:hover,
+.footer-links a:hover {
+  color: #0077B5;
+  transform: translateX(3px);
+}
+
+.site-footer-bottom {
+  max-width: 1200px;
+  margin: 70px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(23, 23, 20, 0.12);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 400 10px/1 var(--mono);
+  color: #888680;
+  letter-spacing: 0.04em;
+}
+
+.footer-back-top {
+  background: none;
+  border: 0;
+  font: 400 11px/1 var(--mono);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: opacity 0.18s ease;
+}
+
+.footer-back-top:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 820px) {
+  .site-footer {
+    padding: 60px 20px 30px;
+  }
+  .site-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .footer-bio {
+    font-size: 20px;
+  }
+  .site-footer-bottom {
+    margin-top: 50px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}
+
+
 
 
 
