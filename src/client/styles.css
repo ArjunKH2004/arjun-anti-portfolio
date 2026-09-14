@@ -210,14 +210,16 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
   height: 14px;
 }
 .clock-cell {
-  width: 14px;
+  min-width: 14px;
   height: 14px;
   line-height: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10.5px;
   box-sizing: border-box;
+  letter-spacing: -0.04em;
+  padding: 0 1px;
 }
 .clock-cell-num {
   color: var(--ink);
