@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowDown, ArrowLeft, ArrowRight, Download, ExternalLink, Menu, Minus, Plus, X } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, Download, ExternalLink, Menu, Minus, Plus, Volume2, VolumeX, X } from 'lucide-react';
 import './styles.css';
 import AsciiBlackHole, { AsciiBlackHoleErrorBoundary } from './AsciiBlackHole';
 
@@ -403,6 +403,68 @@ function VisitorCounter() {
   );
 }
 
+function OstPlayer() {
+  const [playing, setPlaying] = useState(false);
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio('/resonance-ost.mp3');
+    audio.loop = true;
+    audio.volume = 0.55;
+    audioRef.current = audio;
+
+    const startAudio = () => {
+      audio.play().then(() => {
+        setPlaying(true);
+      }).catch(() => {
+        // Autoplay blocked until interaction
+      });
+    };
+
+    startAudio();
+
+    const handleInteraction = () => {
+      if (audio.paused) {
+        audio.play().then(() => setPlaying(true)).catch(() => {});
+      }
+    };
+
+    window.addEventListener('click', handleInteraction, { once: true });
+    window.addEventListener('keydown', handleInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      audio.pause();
+      audioRef.current = null;
+    };
+  }, []);
+
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) {
+      audio.play().then(() => setPlaying(true)).catch(() => {});
+    } else {
+      audio.pause();
+      setPlaying(false);
+    }
+  };
+
+  return (
+    <button
+      className={`ost-toggle ${playing ? 'is-playing' : ''}`}
+      onClick={togglePlay}
+      aria-label={playing ? 'Pause OST' : 'Play OST'}
+      title="Home - Resonance (Slowed OST)"
+    >
+      {playing ? <Volume2 size={13} /> : <VolumeX size={13} />}
+      <span className="ost-label">RESONANCE</span>
+      {playing && <span className="ost-bars"><i></i><i></i><i></i></span>}
+    </button>
+  );
+}
+
 const FINAL_ASCII_ART = `K   K  H   H       A       RRRR     JJJJJ  U   U  N   N
 K  K   H   H      A A      R   R      J    U   U  NN  N
 KK     HHHHH     AAAAA     RRRR       J    U   U  N N N
@@ -630,6 +692,7 @@ function App() {
       <div className="topbar-right">
         <LiveClock />
         <VisitorCounter />
+        <OstPlayer />
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>
