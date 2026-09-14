@@ -787,7 +787,6 @@ function App() {
       </section>
 
       <section className="resume-section section-pad">
-        <Command>cat resume.pdf</Command>
         <div><p>WANT THE BORING VERSION?</p><a href="/arjun-kh-cv.pdf" onClick={(e) => { e.preventDefault(); setShowResume(true); }}>VIEW RÉSUMÉ <ExternalLink size={17}/></a></div>
       </section>
 
