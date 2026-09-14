@@ -236,8 +236,8 @@ html.ascii-startup-active, body.ascii-startup-active {
 /* Site Footer 3-Column Layout */
 .site-footer {
   margin-top: 90px;
-  padding-top: 70px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 20px;
+  border-top: none;
   width: 100%;
 }
 .site-footer-grid {
