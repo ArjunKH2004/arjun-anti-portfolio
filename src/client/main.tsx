@@ -355,6 +355,51 @@ function LiveClock() {
   );
 }
 
+function VisitorCounter() {
+  const [count, setCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const LOCAL_KEY = 'kha_visitor_count';
+    const SESSION_KEY = 'kha_visited_session';
+
+    let current = 3;
+    const stored = localStorage.getItem(LOCAL_KEY);
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!isNaN(parsed) && parsed >= 3) {
+        current = parsed;
+      }
+    }
+
+    if (!sessionStorage.getItem(SESSION_KEY)) {
+      current += 1;
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      localStorage.setItem(LOCAL_KEY, String(current));
+    }
+    setCount(current);
+
+    fetch('https://api.counterapi.dev/v1/arjun-anti-portfolio/visits/up')
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.count === 'number' && data.count > 0) {
+          const remoteCount = Math.max(data.count + 2, current);
+          setCount(remoteCount);
+          localStorage.setItem(LOCAL_KEY, String(remoteCount));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const formatted = String(count ?? 3).padStart(4, '0');
+
+  return (
+    <div className="visitor-count" title="Visitor Count">
+      <span className="visitor-count-label">YOU'RE VISITOR NUMBER:</span>
+      <span className="visitor-count-num">{formatted}</span>
+    </div>
+  );
+}
+
 const FINAL_ASCII_ART = `K   K  H   H       A       RRRR     JJJJJ  U   U  N   N
 K  K   H   H      A A      R   R      J    U   U  NN  N
 KK     HHHHH     AAAAA     RRRR       J    U   U  N N N
@@ -581,7 +626,7 @@ function App() {
       </nav>
       <div className="topbar-right">
         <LiveClock />
-        <div className="status"><i/><span>{section === 'boot' ? 'SYSTEM READY' : `/${section}`}</span></div>
+        <VisitorCounter />
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>
