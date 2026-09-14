@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Download, ExternalLink, Menu, Minus, Plus, X } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, Download, ExternalLink, Menu, Minus, Plus, X } from 'lucide-react';
 import './styles.css';
 import AsciiBlackHole, { AsciiBlackHoleErrorBoundary } from './AsciiBlackHole';
 
@@ -738,34 +738,15 @@ function App() {
         <ScrollLetterReveal text="IF YOU HAVE A PROBLEM WORTH SOLVING, LET'S TALK." breaks={[21,36]}/>
 
         <div className="site-footer">
-          <div className="site-footer-grid">
-            <div className="footer-col-bio">
-              <a href="mailto:kharjun48@gmail.com" className="footer-talk-btn">
-                Let's talk <ArrowUpRight size={18} />
-              </a>
-            </div>
-
-            <div className="footer-col-nav">
-              <span className="footer-col-label">PAGES</span>
-              <ul className="footer-link-list">
-                <li><button onClick={() => go('boot')}>Home</button></li>
-                <li><button onClick={() => go('about')}>About</button></li>
-                <li><button onClick={() => go('projects')}>Work</button></li>
-                <li><button onClick={() => setShowResume(true)}>Resume</button></li>
-                <li><button onClick={() => go('contact')}>Contact</button></li>
-              </ul>
-            </div>
-
-            <div className="footer-col-connect">
-              <span className="footer-col-label">CONNECT</span>
-              <ul className="footer-link-list">
-                <li><a href="https://linkedin.com/in/kharjun" target="_blank" rel="noreferrer">LinkedIn</a></li>
-                <li><a href="https://behance.net/arjunkh" target="_blank" rel="noreferrer">Behance</a></li>
-                <li><a href="https://dribbble.com" target="_blank" rel="noreferrer">Dribbble</a></li>
-                <li><a href="https://medium.com" target="_blank" rel="noreferrer">Medium</a></li>
-                <li><a href="https://wa.me/?text=Hi%20Arjun" target="_blank" rel="noreferrer">WhatsApp</a></li>
-              </ul>
-            </div>
+          <div className="site-footer-connect">
+            <span className="footer-col-label">CONNECT</span>
+            <ul className="footer-link-list">
+              <li><a href="https://linkedin.com/in/kharjun" target="_blank" rel="noreferrer">LinkedIn</a></li>
+              <li><a href="https://behance.net/arjunkh" target="_blank" rel="noreferrer">Behance</a></li>
+              <li><a href="https://dribbble.com" target="_blank" rel="noreferrer">Dribbble</a></li>
+              <li><a href="https://medium.com" target="_blank" rel="noreferrer">Medium</a></li>
+              <li><a href="https://wa.me/?text=Hi%20Arjun" target="_blank" rel="noreferrer">WhatsApp</a></li>
+            </ul>
           </div>
 
           <div className="site-footer-bottom">
