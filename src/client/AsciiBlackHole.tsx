@@ -144,10 +144,10 @@ export default function AsciiBlackHole() {
 
         const cx = width * 0.5;
         const cy = height * 0.5;
-        const horizon = Math.max(64, Math.min(width / 8.7, height / 3.25));
+        const horizon = Math.max(70, Math.min(width / 7.9, height / 2.95));
         const ringRadius = horizon * 1.18;
-        const diskRadius = Math.min(width * 0.47, horizon * 6.2);
-        const diskHalfHeight = Math.max(17, horizon * 0.31);
+        const diskRadius = Math.min(width * 0.52, horizon * 6.2);
+        const diskHalfHeight = Math.max(19, horizon * 0.31);
         const glowRadius = width < 500 ? 58 : 86;
         const glowAt = (x: number, y: number) => {
           if (!pointer.active) return 0;
