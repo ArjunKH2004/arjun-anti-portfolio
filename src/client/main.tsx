@@ -445,84 +445,7 @@ function AboutSlideshow() {
   );
 }
 
-function OstPlayer() {
-  const [muted, setMuted] = useState(false);
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
-  const userMutedRef = React.useRef(false);
 
-  useEffect(() => {
-    const audio = new Audio('/resonance-ost.mp3');
-    audio.loop = true;
-    audio.volume = 0.25;
-    audio.muted = false;
-    audioRef.current = audio;
-
-    const startPlayback = () => {
-      if (!audioRef.current || userMutedRef.current) return;
-      audioRef.current.play().then(() => {
-        setMuted(false);
-      }).catch(() => {
-        // Autoplay policy deferred until user interaction
-      });
-    };
-
-    // Attempt playback immediately on mount
-    startPlayback();
-
-    const onStartupComplete = () => {
-      startPlayback();
-    };
-
-    document.addEventListener('ascii-startup:complete', onStartupComplete);
-
-    const handleInteraction = () => {
-      startPlayback();
-    };
-
-    window.addEventListener('click', handleInteraction);
-    window.addEventListener('keydown', handleInteraction);
-    window.addEventListener('pointerdown', handleInteraction);
-    window.addEventListener('touchstart', handleInteraction);
-
-    return () => {
-      document.removeEventListener('ascii-startup:complete', onStartupComplete);
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('keydown', handleInteraction);
-      window.removeEventListener('pointerdown', handleInteraction);
-      window.removeEventListener('touchstart', handleInteraction);
-      audio.pause();
-      audioRef.current = null;
-    };
-  }, []);
-
-  const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (audio.paused) {
-      userMutedRef.current = false;
-      audio.muted = false;
-      audio.play().then(() => {
-        setMuted(false);
-      }).catch(() => {});
-    } else {
-      const nextMuted = !audio.muted;
-      audio.muted = nextMuted;
-      userMutedRef.current = nextMuted;
-      setMuted(nextMuted);
-    }
-  };
-
-  return (
-    <button
-      className={`ost-toggle ${muted ? 'is-muted' : 'is-playing'}`}
-      onClick={toggleMute}
-      aria-label={muted ? 'Unmute audio' : 'Mute audio'}
-    >
-      {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-    </button>
-  );
-}
 
 const FINAL_ASCII_ART = `K   K  H   H       A       RRRR     JJJJJ  U   U  N   N
 K  K   H   H      A A      R   R      J    U   U  NN  N
@@ -760,7 +683,6 @@ function App() {
       <div className="topbar-right">
         <LiveClock />
         <VisitorCounter />
-        <OstPlayer />
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>
