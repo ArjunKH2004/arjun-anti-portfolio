@@ -195,8 +195,8 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
   padding: 4px 0;
 }
 .ascii-clock-canvas {
-  font: 700 13px/1.1 "Courier New", "Mona Sans Mono", monospace;
-  letter-spacing: 0.06em;
+  font: 700 12px/1 "Courier New", "Mona Sans Mono", monospace;
+  letter-spacing: 0;
   user-select: none;
   margin: 0;
   padding: 0;
@@ -207,13 +207,17 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 .ascii-clock-row {
   display: flex;
   justify-content: center;
-  white-space: pre;
   height: 14px;
 }
 .clock-cell {
-  display: inline-block;
-  width: 11px;
-  text-align: center;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  box-sizing: border-box;
 }
 .clock-cell-num {
   color: var(--ink);
