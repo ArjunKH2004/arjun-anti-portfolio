@@ -712,7 +712,7 @@ function App() {
 
       <section id="projects" className="work-section section-pad">
         <Command>ls /projects</Command>
-        <div className="section-heading work-heading"><ScrollLetterReveal text="THREE THINGS THAT MADE IT OUT." breaks={[18]}/><span>CLICK A COMMAND<br/>TO OPEN</span></div>
+        <div className="section-heading work-heading"><ScrollLetterReveal text="THREE THINGS THAT MADE IT OUT." breaks={[18]}/></div>
         <div className="project-list project-card-grid">
           {projects.map(project => <article key={project.slug} className="project-row project-card">
             <div className="project-preview"><ProjectVisual slug={project.slug} compact/></div>
