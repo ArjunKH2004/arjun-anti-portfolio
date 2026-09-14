@@ -60,6 +60,7 @@ export default function AsciiBlackHole() {
     let rows = 0;
     let frameId = 0;
     let lastFrame = 0;
+    const pointer = { x: -1000, y: -1000, active: false };
     const started = performance.now();
     const particles = Array.from({ length: 18 }, (_, index) => ({
       phase: index * 0.349,
@@ -82,38 +83,54 @@ export default function AsciiBlackHole() {
         canvas.height = Math.round(height * dpr);
         if (context) {
           context.setTransform(dpr, 0, 0, dpr, 0, 0);
-          context.font = `500 ${CELL_H}px "Mona Sans Mono", "IBM Plex Mono", "SFMono-Regular", Consolas, monospace`;
+          context.font = `500 ${CELL_H}px "ArjunBlackHoleMono", "Mona Sans Mono", "IBM Plex Mono", Consolas, monospace`;
           context.textBaseline = 'middle';
           context.textAlign = 'center';
         }
         columns = Math.max(1, Math.ceil(width / CELL_W));
         rows = Math.max(1, Math.ceil(height / CELL_H));
       } catch (err) {
-        // Safe resize guard
+        // Guard resize
       }
     };
 
-    const colorFor = (intensity: number, region: string) => {
+    const updatePointer = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
+      pointer.active = true;
+    };
+
+    const clearPointer = () => {
+      pointer.active = false;
+      pointer.x = -1000;
+      pointer.y = -1000;
+    };
+
+    const colorFor = (intensity: number, region: string, glow = 0) => {
       if (region === 'disk') {
         const red = Math.round(0 + 91 * intensity);
         const green = Math.round(55 + 118 * intensity);
         const blue = Math.round(92 + 103 * intensity);
-        return `rgb(${red}, ${green}, ${blue})`;
+        return `rgb(${Math.round(red + (174 - red) * glow)} ${Math.round(green + (224 - green) * glow)} ${Math.round(blue + (255 - blue) * glow)})`;
       }
       if (region === 'dust') {
         const red = Math.round(0 + 38 * intensity);
         const green = Math.round(30 + 92 * intensity);
         const blue = Math.round(56 + 115 * intensity);
-        return `rgb(${red}, ${green}, ${blue})`;
+        return `rgb(${Math.round(red + (138 - red) * glow)} ${Math.round(green + (205 - green) * glow)} ${Math.round(blue + (247 - blue) * glow)})`;
       }
       if (region === 'ring') {
         const red = Math.round(0 + 158 * intensity);
         const green = Math.round(93 + 116 * intensity);
         const blue = Math.round(150 + 91 * intensity);
-        return `rgb(${red}, ${green}, ${blue})`;
+        return `rgb(${Math.round(red + (202 - red) * glow)} ${Math.round(green + (235 - green) * glow)} ${Math.round(blue + (255 - blue) * glow)})`;
       }
       const blue = Math.round(72 + 74 * intensity);
-      return `rgb(${Math.round(blue * 0.32)}, ${Math.round(blue * 0.67)}, ${blue})`;
+      const red = Math.round(blue * 0.32);
+      const green = Math.round(blue * 0.67);
+      return `rgb(${Math.round(red + (174 - red) * glow)} ${Math.round(green + (224 - green) * glow)} ${Math.round(blue + (255 - blue) * glow)})`;
     };
 
     const draw = (now: number) => {
@@ -131,6 +148,12 @@ export default function AsciiBlackHole() {
         const ringRadius = horizon * 1.18;
         const diskRadius = Math.min(width * 0.47, horizon * 6.2);
         const diskHalfHeight = Math.max(17, horizon * 0.31);
+        const glowRadius = width < 500 ? 58 : 86;
+        const glowAt = (x: number, y: number) => {
+          if (!pointer.active) return 0;
+          const distance = Math.hypot(x - pointer.x, y - pointer.y);
+          return clamp(1 - distance / glowRadius) ** 2;
+        };
 
         for (let row = 0; row < rows; row += 1) {
           const py = row * CELL_H + CELL_H / 2;
@@ -243,7 +266,14 @@ export default function AsciiBlackHole() {
             }
 
             if (glyph && glyph !== ' ') {
-              context.fillStyle = colorFor(intensity, region);
+              const localGlow = glowAt(px, py);
+              context.fillStyle = colorFor(intensity, region, localGlow);
+              if (localGlow > 0.02) {
+                context.shadowColor = `rgba(65, 181, 239, ${0.75 * localGlow})`;
+                context.shadowBlur = 3 + 15 * localGlow;
+              } else {
+                context.shadowBlur = 0;
+              }
               context.fillText(glyph, px, py);
             }
           }
@@ -251,7 +281,7 @@ export default function AsciiBlackHole() {
 
         const wordCount = width < 500 ? 7 : width < 900 ? 10 : 15;
         context.save();
-        context.font = `600 ${Math.max(9, CELL_H - 1)}px "Mona Sans Mono", "IBM Plex Mono", "SFMono-Regular", Consolas, monospace`;
+        context.font = `600 ${Math.max(9, CELL_H - 1)}px "ArjunBlackHoleMono", "Mona Sans Mono", "IBM Plex Mono", Consolas, monospace`;
         context.textBaseline = 'middle';
         context.textAlign = 'center';
 
@@ -296,14 +326,20 @@ export default function AsciiBlackHole() {
           wordX = clamp(wordX, measured / 2 + 6, width - measured / 2 - 6);
           wordY = clamp(wordY, 10, height - 10);
           const emphasis = 0.38 + hashNoise(index, entityEpoch, 709) * 0.14;
+          const wordGlow = glowAt(wordX, wordY);
+          context.shadowBlur = 0;
           context.fillStyle = 'rgba(16, 17, 16, 0.34)';
           context.fillRect(wordX - measured / 2 - 2, wordY - 6, measured + 4, 12);
-          context.fillStyle = `rgba(126, 199, 236, ${emphasis})`;
+          context.fillStyle = `rgba(${Math.round(126 + 66 * wordGlow)}, ${Math.round(199 + 38 * wordGlow)}, ${Math.round(236 + 19 * wordGlow)}, ${emphasis + 0.22 * wordGlow})`;
+          if (wordGlow > 0.02) {
+            context.shadowColor = `rgba(65, 181, 239, ${0.65 * wordGlow})`;
+            context.shadowBlur = 3 + 12 * wordGlow;
+          }
           context.fillText(word, wordX, wordY);
         }
         context.restore();
       } catch (err) {
-        // Safe fallback for unhandled render calculations
+        // Guard fallback
       }
     };
 
@@ -317,6 +353,11 @@ export default function AsciiBlackHole() {
 
     resize();
     window.addEventListener('resize', resize);
+    canvas.addEventListener('pointermove', updatePointer);
+    canvas.addEventListener('pointerenter', updatePointer);
+    canvas.addEventListener('pointerleave', clearPointer);
+    canvas.addEventListener('pointercancel', clearPointer);
+
     let ro: ResizeObserver | null = null;
     if (typeof ResizeObserver !== 'undefined') {
       ro = new ResizeObserver(() => resize());
@@ -328,9 +369,13 @@ export default function AsciiBlackHole() {
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', resize);
+      canvas.removeEventListener('pointermove', updatePointer);
+      canvas.removeEventListener('pointerenter', updatePointer);
+      canvas.removeEventListener('pointerleave', clearPointer);
+      canvas.removeEventListener('pointercancel', clearPointer);
       if (ro) ro.disconnect();
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="ascii-black-hole" aria-label="Animated ASCII black hole" role="img" />;
+  return <canvas ref={canvasRef} className="ascii-black-hole ascii-black-hole-glow" aria-label="Animated ASCII black hole with interactive glow" role="img" />;
 }
