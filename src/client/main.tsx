@@ -731,7 +731,7 @@ function App() {
 
       <section id="archive" className="archive-section section-pad">
         <Command>ls /archive</Command>
-        <div className="section-heading archive-heading"><ScrollLetterReveal text="A HISTORY OF MAKING" breaks={[10]}/><span>FAILED OPENLY<br/>LEARNED QUIETLY</span></div>
+        <div className="section-heading archive-heading"><ScrollLetterReveal text="A HISTORY OF MAKING" breaks={[10]}/><span>STILL BUILDING<br/>STILL LEARNING</span></div>
         <div className="archive-list">
           {archiveItems.map((item, i) => {
             const open = openArchive === i;
