@@ -394,8 +394,11 @@ function VisitorCounter() {
 
   return (
     <div className="visitor-count" title="Visitor Count">
-      <span className="visitor-count-label">YOU'RE VISITOR NUMBER:</span>
-      <span className="visitor-count-num">{formatted}</span>
+      <i className="visitor-dot" />
+      <div className="visitor-count-text">
+        <span className="visitor-count-label">YOU'RE VISITOR NUMBER:</span>
+        <span className="visitor-count-num">{formatted}</span>
+      </div>
     </div>
   );
 }
