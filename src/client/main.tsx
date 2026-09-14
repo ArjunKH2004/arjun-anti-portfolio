@@ -404,8 +404,9 @@ function VisitorCounter() {
 }
 
 function OstPlayer() {
-  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const userMutedRef = React.useRef(false);
 
   useEffect(() => {
     const audio = new Audio('/resonance-ost.mp3');
@@ -413,54 +414,65 @@ function OstPlayer() {
     audio.volume = 0.55;
     audioRef.current = audio;
 
-    const startAudio = () => {
-      audio.play().then(() => {
-        setPlaying(true);
+    const startPlayback = () => {
+      if (!audioRef.current || userMutedRef.current) return;
+      audioRef.current.play().then(() => {
+        setMuted(false);
       }).catch(() => {
-        // Autoplay blocked until interaction
+        // Autoplay policy deferred until user interaction
       });
     };
 
-    startAudio();
+    const onStartupComplete = () => {
+      startPlayback();
+    };
 
-    const handleInteraction = () => {
-      if (audio.paused) {
-        audio.play().then(() => setPlaying(true)).catch(() => {});
+    document.addEventListener('ascii-startup:complete', onStartupComplete);
+
+    const handleFirstInteraction = () => {
+      if (audioRef.current && audioRef.current.paused && !userMutedRef.current) {
+        startPlayback();
       }
     };
 
-    window.addEventListener('click', handleInteraction, { once: true });
-    window.addEventListener('keydown', handleInteraction, { once: true });
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
 
     return () => {
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('keydown', handleInteraction);
+      document.removeEventListener('ascii-startup:complete', onStartupComplete);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
       audio.pause();
       audioRef.current = null;
     };
   }, []);
 
-  const togglePlay = () => {
+  const toggleMute = () => {
     const audio = audioRef.current;
     if (!audio) return;
+
     if (audio.paused) {
-      audio.play().then(() => setPlaying(true)).catch(() => {});
+      userMutedRef.current = false;
+      audio.muted = false;
+      audio.play().then(() => {
+        setMuted(false);
+      }).catch(() => {});
     } else {
-      audio.pause();
-      setPlaying(false);
+      const nextMuted = !audio.muted;
+      audio.muted = nextMuted;
+      userMutedRef.current = nextMuted;
+      setMuted(nextMuted);
     }
   };
 
   return (
     <button
-      className={`ost-toggle ${playing ? 'is-playing' : ''}`}
-      onClick={togglePlay}
-      aria-label={playing ? 'Pause OST' : 'Play OST'}
-      title="Home - Resonance (Slowed OST)"
+      className={`ost-toggle ${muted ? 'is-muted' : 'is-playing'}`}
+      onClick={toggleMute}
+      aria-label={muted ? 'Unmute audio' : 'Mute audio'}
+      title={muted ? 'Unmute OST (Home - Resonance)' : 'Mute OST (Home - Resonance)'}
     >
-      {playing ? <Volume2 size={13} /> : <VolumeX size={13} />}
-      <span className="ost-label">RESONANCE</span>
-      {playing && <span className="ost-bars"><i></i><i></i><i></i></span>}
+      {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
     </button>
   );
 }
