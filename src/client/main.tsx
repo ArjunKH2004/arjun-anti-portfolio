@@ -697,7 +697,7 @@ function App() {
 
     <main>
       <section id="boot" className="boot-section">
-        <Command>portfolio --open</Command>
+        <Command>webpage --open</Command>
         <div className="hero-composition">
           <h1>I'VE BEEN MAKING THINGS FOR A WHILE.</h1>
           <div className="visual">
