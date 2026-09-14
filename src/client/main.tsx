@@ -706,7 +706,7 @@ function App() {
         <Command>who-am-i</Command>
         <div className="section-heading who-heading"><ScrollLetterReveal text="HERE'S WHAT I ACTUALLY WANT YOU TO KNOW." breaks={[23]}/><span>03 STATEMENTS<br/>NO BIOGRAPHY</span></div>
         <div className="statements">
-          {systemStatements.map(s => <article key={s.n} className="statement"><span>{s.n}</span><h2>{s.title}</h2><p>{s.copy}</p></article>)}
+          {systemStatements.map(s => <article key={s.n} className="statement"><div className="statement-header"><span>{s.n}</span><h2>{s.title}</h2></div><p>{s.copy}</p></article>)}
         </div>
       </section>
 
