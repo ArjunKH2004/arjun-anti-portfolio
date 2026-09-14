@@ -12,8 +12,10 @@ const WORDS = [
   'MAKING', 'QUESTIONING', 'EXPLORING', 'UNFINISHED', 'ITERATION', 'SIDE QUEST', 'ROUGH CUT', 'SCRATCH',
   'DRAFT', 'FAILURE', 'VERSION', 'BUILD', 'WIP',
 ] as const;
-const CELL_W = 7;
-const CELL_H = 11;
+
+// High density grid resolution for deep character detail
+const CELL_W = 5.8;
+const CELL_H = 9.2;
 
 function clamp(value: number, min = 0, max = 1) {
   return Math.max(min, Math.min(max, value));
@@ -62,10 +64,13 @@ export default function AsciiBlackHole() {
     let lastFrame = 0;
     const pointer = { x: -1000, y: -1000, active: false };
     const started = performance.now();
-    const particles = Array.from({ length: 18 }, (_, index) => ({
-      phase: index * 0.349,
-      speed: 0.2 + (index % 6) * 0.027,
-      offset: (index * 1.37) % 7,
+
+    // Expanded particle cloud across multiple orbital planes
+    const particles = Array.from({ length: 32 }, (_, index) => ({
+      phase: index * 0.196,
+      speed: 0.15 + (index % 8) * 0.024,
+      offset: (index * 1.13) % 9,
+      radiusFactor: 1.1 + (index % 5) * 0.18,
     }));
 
     const resize = () => {
@@ -144,11 +149,13 @@ export default function AsciiBlackHole() {
 
         const cx = width * 0.5;
         const cy = height * 0.5;
-        const horizon = Math.max(70, Math.min(width / 7.9, height / 2.95));
+
+        // 20% expanded physical radii dimensions
+        const horizon = Math.max(84, Math.min(width / 6.5, height / 2.45));
         const ringRadius = horizon * 1.18;
-        const diskRadius = Math.min(width * 0.52, horizon * 6.2);
-        const diskHalfHeight = Math.max(19, horizon * 0.31);
-        const glowRadius = width < 500 ? 58 : 86;
+        const diskRadius = Math.min(width * 0.62, horizon * 7.5);
+        const diskHalfHeight = Math.max(24, horizon * 0.38);
+        const glowRadius = width < 500 ? 68 : 102;
         const glowAt = (x: number, y: number) => {
           if (!pointer.active) return 0;
           const distance = Math.hypot(x - pointer.x, y - pointer.y);
@@ -167,35 +174,40 @@ export default function AsciiBlackHole() {
             let region = '';
             let glyph = '';
 
+            // Enhanced background star field
             const starNoise = hashNoise(column + Math.floor(elapsed * 0.55), row, 31);
-            if (starNoise > 0.994 && radius > horizon * 1.8) {
-              intensity = 0.14 + 0.3 * (0.5 + 0.5 * Math.sin(elapsed * 1.5 + column * 1.61 + row));
+            if (starNoise > 0.988 && radius > horizon * 1.6) {
+              intensity = 0.14 + 0.34 * (0.5 + 0.5 * Math.sin(elapsed * 1.5 + column * 1.61 + row));
               region = 'star';
-              glyph = intensity > 0.34 ? '+' : '.';
+              glyph = intensity > 0.36 ? '+' : '.';
             }
 
             const radialPosition = Math.abs(x) / diskRadius;
             const turbulentWarp = Math.sin(x * 0.018 - elapsed * 1.4) * diskHalfHeight * 0.16;
             const warpedY = y - turbulentWarp;
 
-            const dustHalfHeight = diskHalfHeight * 2.35 * Math.max(0.08, 1 - radialPosition);
-            if (Math.abs(x) < diskRadius && Math.abs(warpedY) < dustHalfHeight && radius > horizon * 1.03) {
+            const dustHalfHeight = diskHalfHeight * 2.55 * Math.max(0.06, 1 - radialPosition);
+            if (Math.abs(x) < diskRadius && Math.abs(warpedY) < dustHalfHeight && radius > horizon * 1.02) {
               const dustVertical = Math.abs(warpedY) / Math.max(dustHalfHeight, 1);
               const dustNoise = hashNoise(column + Math.floor(elapsed * 4), row, 73);
-              const dustIntensity = clamp((1 - radialPosition) * (1 - dustVertical) * (0.2 + dustNoise * 0.46));
-              if (dustIntensity > intensity && dustNoise > 0.27) {
+              const dustIntensity = clamp((1 - radialPosition) * (1 - dustVertical) * (0.22 + dustNoise * 0.48));
+              if (dustIntensity > intensity && dustNoise > 0.22) {
                 intensity = dustIntensity;
                 region = 'dust';
                 glyph = GLYPHS[Math.max(1, Math.floor(dustIntensity * (GLYPHS.length - 1)))];
               }
             }
 
+            // 8 turbulent accretion stream bands for increased depth
             const bands = [
-              { width: 1.72, speed: 1.8, frequency: 0.041, phase: 0.4, strength: 0.3 },
-              { width: 1.3, speed: -2.8, frequency: 0.066, phase: 1.2, strength: 0.48 },
-              { width: 0.91, speed: 4.2, frequency: 0.105, phase: 2.1, strength: 0.66 },
-              { width: 0.58, speed: -6.1, frequency: 0.158, phase: 3.3, strength: 0.84 },
-              { width: 0.3, speed: 8.4, frequency: 0.238, phase: 4.6, strength: 1.0 },
+              { width: 2.1, speed: 1.4, frequency: 0.032, phase: 0.2, strength: 0.25 },
+              { width: 1.72, speed: 1.8, frequency: 0.041, phase: 0.4, strength: 0.35 },
+              { width: 1.45, speed: -2.2, frequency: 0.055, phase: 0.8, strength: 0.45 },
+              { width: 1.2, speed: -2.8, frequency: 0.066, phase: 1.2, strength: 0.55 },
+              { width: 0.91, speed: 4.2, frequency: 0.105, phase: 2.1, strength: 0.68 },
+              { width: 0.72, speed: -5.1, frequency: 0.132, phase: 2.8, strength: 0.78 },
+              { width: 0.52, speed: -6.1, frequency: 0.158, phase: 3.3, strength: 0.88 },
+              { width: 0.28, speed: 8.4, frequency: 0.238, phase: 4.6, strength: 1.0 },
             ];
             for (const band of bands) {
               const availableHalfHeight = diskHalfHeight * band.width * Math.max(0.05, 1 - 0.5 * radialPosition);
@@ -215,13 +227,14 @@ export default function AsciiBlackHole() {
               }
             }
 
-            const shellRadii = [1.08, 1.36, 1.68];
-            const shellStrengths = [0.32, 0.19, 0.11];
+            // 6 multi-depth gravitational lensing shells
+            const shellRadii = [1.05, 1.22, 1.42, 1.68, 1.95, 2.25];
+            const shellStrengths = [0.38, 0.28, 0.20, 0.14, 0.09, 0.05];
             for (let shell = 0; shell < shellRadii.length; shell += 1) {
               const shellDistance = Math.abs(radius - ringRadius * shellRadii[shell]);
               let shellIntensity = Math.exp(-((shellDistance / Math.max(8, horizon * (0.13 + shell * 0.035))) ** 2));
               shellIntensity *= shellStrengths[shell] * (0.72 + 0.28 * Math.sin(angle * (5 + shell * 2) - elapsed * (1.7 - shell * 0.25)));
-              if (shellIntensity > intensity && shellIntensity > 0.055) {
+              if (shellIntensity > intensity && shellIntensity > 0.045) {
                 intensity = shellIntensity;
                 region = shell === 0 ? 'ring' : 'dust';
                 glyph = GLYPHS[Math.max(1, Math.floor(shellIntensity * (GLYPHS.length - 1)))];
@@ -255,12 +268,12 @@ export default function AsciiBlackHole() {
 
             for (const particle of particles) {
               const particleAngle = elapsed * particle.speed + particle.phase;
-              const particleRadius = ringRadius * (1.82 - 0.075 * ((elapsed * 0.72 + particle.offset) % 7));
+              const particleRadius = ringRadius * particle.radiusFactor * (1.6 - 0.07 * ((elapsed * 0.65 + particle.offset) % 6));
               const particleX = Math.cos(particleAngle) * particleRadius;
               const particleY = Math.sin(particleAngle) * particleRadius * 0.58;
-              if (Math.abs(x - particleX) < CELL_W * 0.7 && Math.abs(y - particleY) < CELL_H * 0.62 && radius > horizon) {
-                glyph = '*';
-                intensity = 0.92;
+              if (Math.abs(x - particleX) < CELL_W * 0.85 && Math.abs(y - particleY) < CELL_H * 0.75 && radius > horizon) {
+                glyph = particle.radiusFactor > 1.4 ? '+' : '*';
+                intensity = 0.94;
                 region = 'ring';
               }
             }
@@ -279,9 +292,9 @@ export default function AsciiBlackHole() {
           }
         }
 
-        const wordCount = width < 500 ? 7 : width < 900 ? 10 : 15;
+        const wordCount = width < 500 ? 8 : width < 900 ? 12 : 18;
         context.save();
-        context.font = `600 ${Math.max(9, CELL_H - 1)}px "ArjunBlackHoleMono", "Mona Sans Mono", "IBM Plex Mono", Consolas, monospace`;
+        context.font = `600 ${Math.max(9, CELL_H)}px "ArjunBlackHoleMono", "Mona Sans Mono", "IBM Plex Mono", Consolas, monospace`;
         context.textBaseline = 'middle';
         context.textAlign = 'center';
 
@@ -377,5 +390,5 @@ export default function AsciiBlackHole() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="ascii-black-hole ascii-black-hole-glow" aria-label="Animated ASCII black hole with interactive glow" role="img" />;
+  return <canvas ref={canvasRef} className="ascii-black-hole ascii-black-hole-glow" aria-label="Animated ASCII black hole with interactive glow and deep character resolution" role="img" />;
 }
