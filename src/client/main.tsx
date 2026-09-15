@@ -308,7 +308,7 @@ function ResumeDetail({ close }: { close: () => void }) {
 function getRayCells(cx: number, cy: number, angle: number, maxLen: number) {
   const cells: Array<{ x: number; y: number }> = [];
   const visited = new Set<string>();
-  for (let d = 1.0; d <= maxLen; d += 0.3) {
+  for (let d = 1.0; d <= maxLen; d += 0.297) {
     const x = Math.round(cx + d * Math.cos(angle));
     const y = Math.round(cy + d * Math.sin(angle));
     const key = `${x},${y}`;

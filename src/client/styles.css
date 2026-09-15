@@ -207,12 +207,12 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 .ascii-clock-row {
   display: flex;
   justify-content: center;
-  height: 14px;
+  height: 13.8px;
 }
 .clock-cell {
-  min-width: 14px;
-  height: 14px;
-  line-height: 14px;
+  min-width: 13.8px;
+  height: 13.8px;
+  line-height: 13.8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -224,6 +224,7 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 .clock-cell-num {
   color: var(--ink);
   font-weight: 700;
+  font-size: 11px;
 }
 .clock-cell-center {
   color: #0099E9;
@@ -233,16 +234,19 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 .clock-cell-hr {
   color: #0099E9;
   font-weight: 800;
+  font-size: 8.8px;
   text-shadow: 0 0 10px rgba(0, 153, 233, 0.9);
 }
 .clock-cell-min {
   color: #ffffff;
   font-weight: 700;
+  font-size: 8.8px;
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 .clock-cell-sec {
   color: #ED7C22;
   font-weight: 700;
+  font-size: 8.8px;
   text-shadow: 0 0 8px rgba(237, 124, 34, 0.9);
 }
 .clock-cell-sep {
