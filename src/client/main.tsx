@@ -673,7 +673,7 @@ function VisitorCounter() {
     <div className={`visitor-count ${isUpdating ? 'is-live-updating' : ''}`} title="Live Visitor Count">
       <span className="visitor-dot" />
       <div className="visitor-count-text">
-        <span className="visitor-count-label">VISITORS</span>
+        <span className="visitor-count-label">YOU'RE VISITOR NUMBER:</span>
         <span className="visitor-count-num">{formatted}</span>
       </div>
     </div>
@@ -960,11 +960,11 @@ function App() {
         {['projects', 'archive', 'about', 'contact'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => go(item)}>/{item}</button>)}
       </nav>
       <div className="topbar-right">
-        <VisitorCounter />
         <div className="clock-dropdown-wrapper">
           <LiveClock onClick={() => setShowClockModal(prev => !prev)} />
           {showClockModal && <ClockDropdown close={() => setShowClockModal(false)} />}
         </div>
+        <VisitorCounter />
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>
