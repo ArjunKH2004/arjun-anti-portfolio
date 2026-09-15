@@ -495,8 +495,11 @@ function ClockModal({ close }: { close: () => void }) {
 
   useEffect(() => {
     document.body.classList.add('detail-open');
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     return () => {
       document.body.classList.remove('detail-open');
+      document.body.style.overflow = origOverflow;
     };
   }, []);
 
@@ -554,28 +557,27 @@ function ClockModal({ close }: { close: () => void }) {
 
   return (
     <div
-      className={`project-modal-backdrop ${closing ? 'is-closing' : ''}`}
+      className={`clock-popover-backdrop ${closing ? 'is-closing' : ''}`}
       onMouseDown={event => { if (event.target === event.currentTarget) requestClose(); }}
     >
       <div
         ref={dialogRef}
-        className={`project-modal clock-project-modal ${closing ? 'is-closing' : ''}`}
+        className={`clock-popover-card ${closing ? 'is-closing' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label="ASCII Analog Clock"
-        style={{ '--project-accent': '#0099E9' } as React.CSSProperties}
       >
-        <header className="project-modal-header">
-          <div>
-            <span>SYSTEM UTILITY</span>
-            <b>/ascii-analog-clock</b>
+        <header className="clock-popover-header">
+          <div className="clock-popover-title">
+            <span className="clock-popover-dot" />
+            <span>ASCII ANALOG CLOCK</span>
           </div>
-          <button onClick={requestClose} aria-label="Close clock modal">
-            <X size={18} />
+          <button onClick={requestClose} className="clock-popover-close" aria-label="Close clock popup">
+            <X size={16} />
           </button>
         </header>
 
-        <div className="clock-modal-body">
+        <div className="clock-popover-body">
           <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
             {clockData.grid.map((row, rIdx) => (
               <div key={rIdx} className="ascii-clock-row">
@@ -588,7 +590,7 @@ function ClockModal({ close }: { close: () => void }) {
             ))}
           </pre>
 
-          <div className="clock-modal-meta-bar">
+          <div className="clock-popover-meta">
             <div className="ascii-clock-legend">
               <span className="legend-item hr"><span className="legend-key">{clockData.hrStr}</span> HOUR</span>
               <span className="legend-item min"><span className="legend-key">{clockData.minStr}</span> MINUTE</span>
