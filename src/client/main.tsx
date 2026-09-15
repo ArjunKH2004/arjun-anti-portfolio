@@ -434,10 +434,8 @@ function getAsciiClockGrid(partsMap: Record<string, string>) {
   return { grid, hrStr, minStr, secStr };
 }
 
-function LiveClock() {
+function LiveClock({ onClick }: { onClick?: () => void }) {
   const [time, setTime] = useState<Date>(new Date());
-  const [expanded, setExpanded] = useState<boolean>(false);
-  const containerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -445,24 +443,6 @@ function LiveClock() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    if (!expanded) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setExpanded(false);
-    };
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setExpanded(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [expanded]);
 
   const formatter = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Kolkata',
@@ -491,65 +471,149 @@ function LiveClock() {
   const seconds = partsMap.second || '00';
   const period = (partsMap.dayPeriod || 'AM').toUpperCase();
 
-  const clockData = expanded ? getAsciiClockGrid(partsMap) : null;
+  return (
+    <div
+      className="live-clock live-clock--clickable"
+      onClick={onClick}
+      title="Click to view ASCII Analog Clock"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } }}
+    >
+      <span className="clock-date">{dayName} {dayNum} {monthName} {year}</span>
+      <span className="clock-sep">/</span>
+      <span className="clock-time">{hours}:{minutes}:{seconds} {period}</span>
+      <span className="clock-tz">IST</span>
+    </div>
+  );
+}
+
+function ClockModal({ close }: { close: () => void }) {
+  const [closing, setClosing] = useState(false);
+  const [time, setTime] = useState<Date>(new Date());
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    document.body.classList.add('detail-open');
+    return () => {
+      document.body.classList.remove('detail-open');
+    };
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const requestClose = React.useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    setTimeout(() => {
+      close();
+    }, 180);
+  }, [closing, close]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') requestClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [requestClose]);
+
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Kolkata',
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+
+  const partsMap: Record<string, string> = {};
+  formatter.formatToParts(time).forEach(({ type, value }) => {
+    partsMap[type] = value;
+  });
+
+  const dayName = (partsMap.weekday || '').toUpperCase();
+  const dayNum = partsMap.day || '01';
+  const monthName = (partsMap.month || '').toUpperCase();
+  const year = partsMap.year || '2026';
+
+  const hours = partsMap.hour || '12';
+  const minutes = partsMap.minute || '00';
+  const seconds = partsMap.second || '00';
+  const period = (partsMap.dayPeriod || 'AM').toUpperCase();
+
+  const clockData = getAsciiClockGrid(partsMap);
 
   return (
-    <div className={`live-clock-wrapper ${expanded ? 'is-expanded' : ''}`} ref={containerRef}>
-      {!expanded ? (
-        <div
-          className="live-clock live-clock--clickable"
-          onClick={() => setExpanded(true)}
-          title="Click to view ASCII Analog Clock"
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(true); } }}
-        >
-          <span className="clock-date">{dayName} {dayNum} {monthName} {year}</span>
-          <span className="clock-sep">/</span>
-          <span className="clock-time">{hours}:{minutes}:{seconds} {period}</span>
-          <span className="clock-tz">IST</span>
-        </div>
-      ) : (
-        <div className="ascii-clock-modal">
-          <div className="ascii-clock-header">
-            <div className="ascii-clock-title">
-              <span className="ascii-startup__signal">●</span> CLOCK
+    <div
+      className={`project-modal-backdrop ${closing ? 'is-closing' : ''}`}
+      onMouseDown={event => { if (event.target === event.currentTarget) requestClose(); }}
+    >
+      <div
+        ref={dialogRef}
+        className={`project-modal clock-project-modal ${closing ? 'is-closing' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="ASCII Analog Clock"
+        style={{ '--project-accent': '#0099E9' } as React.CSSProperties}
+      >
+        <header className="project-modal-header">
+          <div>
+            <span>SYSTEM UTILITY</span>
+            <b>/utilities/ascii-analog-clock</b>
+          </div>
+          <button onClick={requestClose} aria-label="Close clock modal">
+            <X size={20} />
+          </button>
+        </header>
+
+        <div className="project-modal-scroll clock-modal-scroll">
+          <section className="clock-modal-content">
+            <div className="clock-modal-kicker">REALTIME SYSTEM CLOCK</div>
+            <h1 className="clock-modal-heading">ANALOG TIME UTILITY</h1>
+
+            <div className="clock-modal-ascii-box">
+              <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
+                {clockData.grid.map((row, rIdx) => (
+                  <div key={rIdx} className="ascii-clock-row">
+                    {row.map((cell, cIdx) => (
+                      <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
+                        {cell.char}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </pre>
             </div>
-            <button
-              className="ascii-clock-close"
-              onClick={(e) => { e.stopPropagation(); setExpanded(false); }}
-              aria-label="Close analog clock"
-            >
-              <X size={14} />
+
+            <div className="clock-modal-meta-bar">
+              <div className="ascii-clock-legend">
+                <span className="legend-item hr"><span className="legend-key">{clockData.hrStr}</span> HOUR</span>
+                <span className="legend-item min"><span className="legend-key">{clockData.minStr}</span> MINUTE</span>
+                <span className="legend-item sec"><span className="legend-key">{clockData.secStr}</span> SECOND</span>
+              </div>
+              <div className="ascii-clock-digital">
+                {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST
+              </div>
+            </div>
+          </section>
+
+          <footer className="project-modal-footer">
+            <p>ASCII Analog Clock rendered in pure TypeScript and CSS grid.</p>
+            <button onClick={requestClose}>
+              <ArrowLeft size={16} /> BACK TO PORTFOLIO
             </button>
-          </div>
-
-          <div className="ascii-clock-body">
-            <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
-              {clockData?.grid.map((row, rIdx) => (
-                <div key={rIdx} className="ascii-clock-row">
-                  {row.map((cell, cIdx) => (
-                    <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
-                      {cell.char}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </pre>
-          </div>
-
-          <div className="ascii-clock-footer">
-            <div className="ascii-clock-legend">
-              <span className="legend-item hr"><span className="legend-key">{clockData?.hrStr || hours}</span> HOUR</span>
-              <span className="legend-item min"><span className="legend-key">{clockData?.minStr || minutes}</span> MINUTE</span>
-              <span className="legend-item sec"><span className="legend-key">{clockData?.secStr || seconds}</span> SECOND</span>
-            </div>
-            <div className="ascii-clock-digital">
-              {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST
-            </div>
-          </div>
+          </footer>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -859,6 +923,7 @@ function AsciiStartup({ storageKey = 'kha-startup-seen' }: { storageKey?: string
 function App() {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [showResume, setShowResume] = useState(false);
+  const [showClockModal, setShowClockModal] = useState(false);
   const [openArchive, setOpenArchive] = useState<number | null>(null);
   const [mobileNav, setMobileNav] = useState(false);
   const [section, setSection] = useState('boot');
@@ -889,7 +954,7 @@ function App() {
         {['projects', 'archive', 'about', 'contact'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => go(item)}>/{item}</button>)}
       </nav>
       <div className="topbar-right">
-        <VisitorCounter />
+        <LiveClock onClick={() => setShowClockModal(true)} />
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>
@@ -1010,12 +1075,13 @@ function App() {
         </div>
       </section>
     </main>
-    <div className="fixed-live-clock">
-      <LiveClock />
+    <div className="fixed-visitor-counter">
+      <VisitorCounter />
     </div>
   </div>
   {activeProject && <ProjectDetail project={activeProject} close={closeProject}/>}
   {showResume && <ResumeDetail close={() => setShowResume(false)}/>}
+  {showClockModal && <ClockModal close={() => setShowClockModal(false)}/>}
   </>;
 }
 
