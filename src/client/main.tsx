@@ -568,50 +568,36 @@ function ClockModal({ close }: { close: () => void }) {
         <header className="project-modal-header">
           <div>
             <span>SYSTEM UTILITY</span>
-            <b>/utilities/ascii-analog-clock</b>
+            <b>/ascii-analog-clock</b>
           </div>
           <button onClick={requestClose} aria-label="Close clock modal">
-            <X size={20} />
+            <X size={18} />
           </button>
         </header>
 
-        <div className="project-modal-scroll clock-modal-scroll">
-          <section className="clock-modal-content">
-            <div className="clock-modal-kicker">REALTIME SYSTEM CLOCK</div>
-            <h1 className="clock-modal-heading">ANALOG TIME UTILITY</h1>
-
-            <div className="clock-modal-ascii-box">
-              <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
-                {clockData.grid.map((row, rIdx) => (
-                  <div key={rIdx} className="ascii-clock-row">
-                    {row.map((cell, cIdx) => (
-                      <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
-                        {cell.char}
-                      </span>
-                    ))}
-                  </div>
+        <div className="clock-modal-body">
+          <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
+            {clockData.grid.map((row, rIdx) => (
+              <div key={rIdx} className="ascii-clock-row">
+                {row.map((cell, cIdx) => (
+                  <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
+                    {cell.char}
+                  </span>
                 ))}
-              </pre>
-            </div>
-
-            <div className="clock-modal-meta-bar">
-              <div className="ascii-clock-legend">
-                <span className="legend-item hr"><span className="legend-key">{clockData.hrStr}</span> HOUR</span>
-                <span className="legend-item min"><span className="legend-key">{clockData.minStr}</span> MINUTE</span>
-                <span className="legend-item sec"><span className="legend-key">{clockData.secStr}</span> SECOND</span>
               </div>
-              <div className="ascii-clock-digital">
-                {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST
-              </div>
-            </div>
-          </section>
+            ))}
+          </pre>
 
-          <footer className="project-modal-footer">
-            <p>ASCII Analog Clock rendered in pure TypeScript and CSS grid.</p>
-            <button onClick={requestClose}>
-              <ArrowLeft size={16} /> BACK TO PORTFOLIO
-            </button>
-          </footer>
+          <div className="clock-modal-meta-bar">
+            <div className="ascii-clock-legend">
+              <span className="legend-item hr"><span className="legend-key">{clockData.hrStr}</span> HOUR</span>
+              <span className="legend-item min"><span className="legend-key">{clockData.minStr}</span> MINUTE</span>
+              <span className="legend-item sec"><span className="legend-key">{clockData.secStr}</span> SECOND</span>
+            </div>
+            <div className="ascii-clock-digital">
+              {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST
+            </div>
+          </div>
         </div>
       </div>
     </div>
