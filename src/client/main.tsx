@@ -320,7 +320,7 @@ function getRayCells(cx: number, cy: number, angle: number, maxLen: number) {
   return cells;
 }
 
-function getAsciiClockGrid(partsMap: Record<string, string>, ms: number) {
+function getAsciiClockGrid(partsMap: Record<string, string>) {
   const COLS = 17;
   const ROWS = 17;
   const cx = 8;
@@ -374,13 +374,10 @@ function getAsciiClockGrid(partsMap: Record<string, string>, ms: number) {
   const rawHr = parseInt(hrStr, 10) % 12;
   const rawMin = parseInt(minStr, 10);
   const rawSec = parseInt(secStr, 10);
-  const secFloat = rawSec + ms / 1000;
-  const minFloat = rawMin + secFloat / 60;
-  const hrFloat = rawHr + minFloat / 60;
 
-  const aSec = (secFloat / 60) * 2 * Math.PI - Math.PI / 2;
-  const aMin = (minFloat / 60) * 2 * Math.PI - Math.PI / 2;
-  const aHr = (hrFloat / 12) * 2 * Math.PI - Math.PI / 2;
+  const aSec = (rawSec / 60) * 2 * Math.PI - Math.PI / 2;
+  const aMin = ((rawMin + rawSec / 60) / 60) * 2 * Math.PI - Math.PI / 2;
+  const aHr = (((rawHr + rawMin / 60) / 12) * 2 * Math.PI) - Math.PI / 2;
 
   // Second hand (L = 6.6)
   const secCells = getRayCells(cx, cy, aSec, 6.6);
@@ -424,12 +421,11 @@ function LiveClock() {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const interval = expanded ? 100 : 1000;
     const timer = setInterval(() => {
       setTime(new Date());
-    }, interval);
+    }, 1000);
     return () => clearInterval(timer);
-  }, [expanded]);
+  }, []);
 
   useEffect(() => {
     if (!expanded) return;
@@ -476,7 +472,7 @@ function LiveClock() {
   const seconds = partsMap.second || '00';
   const period = (partsMap.dayPeriod || 'AM').toUpperCase();
 
-  const clockData = expanded ? getAsciiClockGrid(partsMap, time.getMilliseconds()) : null;
+  const clockData = expanded ? getAsciiClockGrid(partsMap) : null;
 
   return (
     <div className={`live-clock-wrapper ${expanded ? 'is-expanded' : ''}`} ref={containerRef}>
