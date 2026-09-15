@@ -488,10 +488,10 @@ function LiveClock({ onClick }: { onClick?: () => void }) {
   );
 }
 
-function ClockModal({ close }: { close: () => void }) {
+function ClockDropdown({ close }: { close: () => void }) {
   const [closing, setClosing] = useState(false);
   const [time, setTime] = useState<Date>(new Date());
-  const dialogRef = React.useRef<HTMLDivElement>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.body.classList.add('detail-open');
@@ -515,15 +515,26 @@ function ClockModal({ close }: { close: () => void }) {
     setClosing(true);
     setTimeout(() => {
       close();
-    }, 180);
+    }, 150);
   }, [closing, close]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') requestClose();
     };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        const clockBtn = document.querySelector('.live-clock--clickable');
+        if (clockBtn && clockBtn.contains(e.target as Node)) return;
+        requestClose();
+      }
+    };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [requestClose]);
 
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -557,48 +568,42 @@ function ClockModal({ close }: { close: () => void }) {
 
   return (
     <div
-      className={`clock-popover-backdrop ${closing ? 'is-closing' : ''}`}
-      onMouseDown={event => { if (event.target === event.currentTarget) requestClose(); }}
+      ref={dropdownRef}
+      className={`clock-dropdown-card ${closing ? 'is-closing' : ''}`}
+      role="dialog"
+      aria-label="ASCII Analog Clock"
     >
-      <div
-        ref={dialogRef}
-        className={`clock-popover-card ${closing ? 'is-closing' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="ASCII Analog Clock"
-      >
-        <header className="clock-popover-header">
-          <div className="clock-popover-title">
-            <span className="clock-popover-dot" />
-            <span>ASCII ANALOG CLOCK</span>
+      <header className="clock-dropdown-header">
+        <div className="clock-dropdown-title">
+          <span className="clock-dropdown-dot" />
+          <span>ASCII ANALOG CLOCK</span>
+        </div>
+        <button onClick={requestClose} className="clock-dropdown-close" aria-label="Close clock popup">
+          <X size={15} />
+        </button>
+      </header>
+
+      <div className="clock-dropdown-body">
+        <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
+          {clockData.grid.map((row, rIdx) => (
+            <div key={rIdx} className="ascii-clock-row">
+              {row.map((cell, cIdx) => (
+                <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
+                  {cell.char}
+                </span>
+              ))}
+            </div>
+          ))}
+        </pre>
+
+        <div className="clock-dropdown-meta">
+          <div className="ascii-clock-legend">
+            <span className="legend-item hr"><span className="legend-key">{clockData.hrStr}</span> HOUR</span>
+            <span className="legend-item min"><span className="legend-key">{clockData.minStr}</span> MINUTE</span>
+            <span className="legend-item sec"><span className="legend-key">{clockData.secStr}</span> SECOND</span>
           </div>
-          <button onClick={requestClose} className="clock-popover-close" aria-label="Close clock popup">
-            <X size={16} />
-          </button>
-        </header>
-
-        <div className="clock-popover-body">
-          <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
-            {clockData.grid.map((row, rIdx) => (
-              <div key={rIdx} className="ascii-clock-row">
-                {row.map((cell, cIdx) => (
-                  <span key={cIdx} className={`clock-cell clock-cell-${cell.type}`}>
-                    {cell.char}
-                  </span>
-                ))}
-              </div>
-            ))}
-          </pre>
-
-          <div className="clock-popover-meta">
-            <div className="ascii-clock-legend">
-              <span className="legend-item hr"><span className="legend-key">{clockData.hrStr}</span> HOUR</span>
-              <span className="legend-item min"><span className="legend-key">{clockData.minStr}</span> MINUTE</span>
-              <span className="legend-item sec"><span className="legend-key">{clockData.secStr}</span> SECOND</span>
-            </div>
-            <div className="ascii-clock-digital">
-              {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST
-            </div>
+          <div className="ascii-clock-digital">
+            {dayName} {dayNum} {monthName} {year} &nbsp;•&nbsp; {hours}:{minutes}:{seconds} {period} IST
           </div>
         </div>
       </div>
@@ -942,7 +947,10 @@ function App() {
         {['projects', 'archive', 'about', 'contact'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => go(item)}>/{item}</button>)}
       </nav>
       <div className="topbar-right">
-        <LiveClock onClick={() => setShowClockModal(true)} />
+        <div className="clock-dropdown-wrapper">
+          <LiveClock onClick={() => setShowClockModal(prev => !prev)} />
+          {showClockModal && <ClockDropdown close={() => setShowClockModal(false)} />}
+        </div>
       </div>
       <button className="mobile-menu" onClick={() => setMobileNav(!mobileNav)} aria-label="Toggle navigation">{mobileNav ? <X/> : <Menu/>}</button>
     </header>
@@ -1069,7 +1077,6 @@ function App() {
   </div>
   {activeProject && <ProjectDetail project={activeProject} close={closeProject}/>}
   {showResume && <ResumeDetail close={() => setShowResume(false)}/>}
-  {showClockModal && <ClockModal close={() => setShowClockModal(false)}/>}
   </>;
 }
 
