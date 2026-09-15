@@ -305,19 +305,38 @@ function ResumeDetail({ close }: { close: () => void }) {
 
 
 
-function getRayCells(cx: number, cy: number, angle: number, maxLen: number) {
-  const cells: Array<{ x: number; y: number }> = [];
-  const visited = new Set<string>();
-  for (let d = 1.0; d <= maxLen; d += 0.297) {
-    const x = Math.round(cx + d * Math.cos(angle));
-    const y = Math.round(cy + d * Math.sin(angle));
-    const key = `${x},${y}`;
-    if (!visited.has(key)) {
-      visited.add(key);
-      cells.push({ x, y });
+function getBresenhamRayCells(cx: number, cy: number, angle: number, maxLen: number) {
+  const x1 = Math.round(cx + maxLen * Math.cos(angle));
+  const y1 = Math.round(cy + maxLen * Math.sin(angle));
+
+  let x0 = cx;
+  let y0 = cy;
+
+  const dx = Math.abs(x1 - x0);
+  const dy = Math.abs(y1 - y0);
+  const sx = x0 < x1 ? 1 : -1;
+  const sy = y0 < y1 ? 1 : -1;
+  let err = dx - dy;
+
+  const rawCells: Array<{ x: number; y: number }> = [];
+
+  while (true) {
+    if (!(x0 === cx && y0 === cy)) {
+      rawCells.push({ x: x0, y: y0 });
+    }
+    if (x0 === x1 && y0 === y1) break;
+    const e2 = 2 * err;
+    if (e2 > -dy) {
+      err -= dy;
+      x0 += sx;
+    }
+    if (e2 < dx) {
+      err += dx;
+      y0 += sy;
     }
   }
-  return cells;
+
+  return rawCells;
 }
 
 function getAsciiClockGrid(partsMap: Record<string, string>) {
@@ -380,7 +399,7 @@ function getAsciiClockGrid(partsMap: Record<string, string>) {
   const aHr = (((rawHr + rawMin / 60) / 12) * 2 * Math.PI) - Math.PI / 2;
 
   // Second hand (L = 6.6)
-  const secCells = getRayCells(cx, cy, aSec, 6.6);
+  const secCells = getBresenhamRayCells(cx, cy, aSec, 6.6);
   secCells.forEach(({ x, y }) => {
     if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
       if (grid[y][x].type !== 'num' && grid[y][x].type !== 'sep') {
@@ -390,7 +409,7 @@ function getAsciiClockGrid(partsMap: Record<string, string>) {
   });
 
   // Minute hand (L = 5.6)
-  const minCells = getRayCells(cx, cy, aMin, 5.6);
+  const minCells = getBresenhamRayCells(cx, cy, aMin, 5.6);
   minCells.forEach(({ x, y }) => {
     if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
       if (grid[y][x].type !== 'num' && grid[y][x].type !== 'sep') {
@@ -400,7 +419,7 @@ function getAsciiClockGrid(partsMap: Record<string, string>) {
   });
 
   // Hour hand (L = 3.8)
-  const hrCells = getRayCells(cx, cy, aHr, 3.8);
+  const hrCells = getBresenhamRayCells(cx, cy, aHr, 3.8);
   hrCells.forEach(({ x, y }) => {
     if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
       if (grid[y][x].type !== 'num' && grid[y][x].type !== 'sep') {
