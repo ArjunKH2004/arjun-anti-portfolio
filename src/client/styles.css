@@ -310,22 +310,25 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
   position: relative;
   display: inline-flex;
   align-items: center;
+  width: max-content;
 }
 
 .clock-dropdown-card {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
+  left: 0;
+  width: 100%;
   z-index: 120;
-  width: min(340px, calc(100vw - 28px));
   background: rgba(14, 14, 12, 0.98);
   border: 1px solid var(--rule);
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(20px);
   animation: clockDropdownIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: top right;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .clock-dropdown-card.is-closing {
@@ -356,8 +359,8 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 }
 
 .clock-dropdown-header {
-  height: 40px;
-  padding: 0 14px;
+  height: 34px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -367,14 +370,14 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
 .clock-dropdown-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font: 700 10.5px/1 var(--mono);
+  gap: 6px;
+  font: 700 9px/1 var(--mono);
   color: var(--ink);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
 }
 .clock-dropdown-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background: var(--acid);
   border-radius: 50%;
   animation: dotBlink 1s steps(1) infinite;
@@ -384,7 +387,7 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
   border: 0;
   color: var(--muted);
   cursor: pointer;
-  padding: 3px;
+  padding: 2px;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -396,26 +399,66 @@ html{scroll-behavior:smooth;overflow-y:auto}body,#root{min-height:100%;height:au
   background: rgba(255, 255, 255, 0.1);
 }
 .clock-dropdown-body {
-  padding: 16px 18px 18px;
+  padding: 10px 8px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+}
+.clock-dropdown-card .ascii-clock-canvas {
+  font: 700 10px/1 "Courier New", "Mona Sans Mono", monospace;
+}
+.clock-dropdown-card .ascii-clock-row {
+  height: 11px;
+}
+.clock-dropdown-card .clock-cell {
+  min-width: 11px;
+  height: 11px;
+  line-height: 11px;
+  font-size: 8.5px;
+  padding: 0;
+}
+.clock-dropdown-card .clock-cell-num {
+  font-size: 9px;
+}
+.clock-dropdown-card .clock-cell-hr,
+.clock-dropdown-card .clock-cell-min,
+.clock-dropdown-card .clock-cell-sec {
+  font-size: 7px;
+}
+.clock-dropdown-card .clock-cell-sep {
+  font-size: 7.5px;
 }
 .clock-dropdown-meta {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  padding-top: 12px;
+  padding-top: 8px;
   border-top: 1px solid rgba(54, 52, 46, 0.6);
+}
+.clock-dropdown-card .ascii-clock-legend {
+  gap: 8px;
+  font-size: 7.5px;
+}
+.clock-dropdown-card .legend-item {
+  gap: 3px;
+}
+.clock-dropdown-card .legend-key {
+  padding: 1px 3px;
+  font-size: 7.5px;
+}
+.clock-dropdown-card .ascii-clock-digital {
+  font-size: 8px;
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 480px) {
   .clock-dropdown-card {
-    right: -10px;
-    width: min(320px, calc(100vw - 20px));
+    right: 0;
+    left: 0;
+    width: 100%;
   }
 }
 
