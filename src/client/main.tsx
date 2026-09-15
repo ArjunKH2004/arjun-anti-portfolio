@@ -573,16 +573,6 @@ function ClockDropdown({ close }: { close: () => void }) {
       role="dialog"
       aria-label="ASCII Analog Clock"
     >
-      <header className="clock-dropdown-header">
-        <div className="clock-dropdown-title">
-          <span className="clock-dropdown-dot" />
-          <span>ASCII ANALOG CLOCK</span>
-        </div>
-        <button onClick={requestClose} className="clock-dropdown-close" aria-label="Close clock popup">
-          <X size={15} />
-        </button>
-      </header>
-
       <div className="clock-dropdown-body">
         <pre className="ascii-clock-canvas" aria-label="ASCII Analog Clock">
           {clockData.grid.map((row, rIdx) => (
