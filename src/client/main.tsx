@@ -960,6 +960,7 @@ function App() {
         {['projects', 'archive', 'about', 'contact'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => go(item)}>/{item}</button>)}
       </nav>
       <div className="topbar-right">
+        <VisitorCounter />
         <div className="clock-dropdown-wrapper">
           <LiveClock onClick={() => setShowClockModal(prev => !prev)} />
           {showClockModal && <ClockDropdown close={() => setShowClockModal(false)} />}
@@ -1084,9 +1085,6 @@ function App() {
         </div>
       </section>
     </main>
-    <div className="fixed-visitor-counter">
-      <VisitorCounter />
-    </div>
   </div>
   {activeProject && <ProjectDetail project={activeProject} close={closeProject}/>}
   {showResume && <ResumeDetail close={() => setShowResume(false)}/>}
