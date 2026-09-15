@@ -602,55 +602,78 @@ function ClockDropdown({ close }: { close: () => void }) {
 }
 
 function VisitorCounter() {
+  const LOCAL_KEY = 'kha_visitor_count';
+  const SESSION_KEY = 'kha_session_recorded';
+  const GET_ENDPOINT = 'https://countapi.mileshilliard.com/api/v1/get/arjunkh_anti_portfolio_visits_v1';
+  const HIT_ENDPOINT = 'https://countapi.mileshilliard.com/api/v1/hit/arjunkh_anti_portfolio_visits_v1';
+
   const [count, setCount] = useState<number>(() => {
-    const LOCAL_KEY = 'kha_visitor_count';
     const stored = localStorage.getItem(LOCAL_KEY);
     if (stored) {
       const parsed = parseInt(stored, 10);
-      if (!isNaN(parsed) && parsed >= 1) {
-        return parsed;
-      }
+      if (!isNaN(parsed) && parsed >= 1) return parsed;
     }
     return 1;
   });
 
-  const hasExecutedRef = React.useRef(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const prevCountRef = React.useRef(count);
 
-  useEffect(() => {
-    if (hasExecutedRef.current) return;
-    hasExecutedRef.current = true;
-
-    const SESSION_KEY = 'kha_session_recorded';
-    const LOCAL_KEY = 'kha_visitor_count';
-    const isNewSession = !sessionStorage.getItem(SESSION_KEY);
-    const endpoint = isNewSession
-      ? 'https://countapi.mileshilliard.com/api/v1/hit/arjunkh_anti_portfolio_visits_v1'
-      : 'https://countapi.mileshilliard.com/api/v1/get/arjunkh_anti_portfolio_visits_v1';
+  const fetchCurrentCount = React.useCallback((isInitial = false) => {
+    const isNewSession = isInitial && !sessionStorage.getItem(SESSION_KEY);
+    const url = isNewSession ? HIT_ENDPOINT : GET_ENDPOINT;
 
     if (isNewSession) {
       sessionStorage.setItem(SESSION_KEY, 'true');
     }
 
-    fetch(endpoint)
+    fetch(url)
       .then(res => res.json())
       .then(data => {
         if (data && typeof data.value === 'number' && data.value >= 1) {
+          if (data.value !== prevCountRef.current) {
+            setIsUpdating(true);
+            setTimeout(() => setIsUpdating(false), 800);
+            prevCountRef.current = data.value;
+          }
           setCount(data.value);
           localStorage.setItem(LOCAL_KEY, String(data.value));
         }
       })
       .catch(err => {
-        console.warn('Visitor counter API unreachable, falling back to local count:', err);
+        console.warn('Visitor counter API sync failed:', err);
       });
   }, []);
+
+  useEffect(() => {
+    fetchCurrentCount(true);
+
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchCurrentCount(false);
+      }
+    }, 4000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchCurrentCount(false);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchCurrentCount]);
 
   const formatted = String(count).padStart(4, '0');
 
   return (
-    <div className="visitor-count" title="Visitor Count">
-      <i className="visitor-dot" />
+    <div className={`visitor-count ${isUpdating ? 'is-live-updating' : ''}`} title="Live Visitor Count">
+      <span className="visitor-dot" />
       <div className="visitor-count-text">
-        <span className="visitor-count-label">YOU'RE VISITOR NUMBER:</span>
+        <span className="visitor-count-label">VISITORS</span>
         <span className="visitor-count-num">{formatted}</span>
       </div>
     </div>
